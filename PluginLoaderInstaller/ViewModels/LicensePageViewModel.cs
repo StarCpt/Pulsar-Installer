@@ -10,20 +10,10 @@ public class LicensePageViewModel(MainViewModel mainViewModel) : PageViewModelBa
     public override string NextButtonText => "Next";
 
     public string LicenseText { get; } = """
-PLACEHOLDER LICENSE, REPLACE WITH ACTUAL LICENSE!!!!!!!!
-.
-.
-.
-.
-.
-.
-.
-.
-.
-.
 MIT License
 
-Copyright (c) [year] [fullname]
+Copyright (c) 2021 austinvaness
+Copyright (c) 2025 SpaceGT
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
