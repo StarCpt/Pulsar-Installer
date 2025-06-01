@@ -61,12 +61,12 @@ jobs:
         run: |
           cmd /c mklink /J pulsar\Bin64 se\DedicatedServer64
           msbuild -t:restore -p:RestorePackagesConfig=true pulsar\PluginLoader.sln
-          msbuild -t:Build -p:OutputPath=..\..\master\PluginLoaderInstaller\Assets\Plugins,Configuration=Release,Platform=x64,TargetFrameworkVersion=v4.8 pluginloader\PluginLoader\PluginLoader.csproj
+          msbuild -t:Build -p:OutputPath=..\..\master\PluginLoaderInstaller\Assets\Plugins,Configuration=Release,Platform=x64,TargetFrameworkVersion=v4.8 pulsar\PluginLoader\PluginLoader.csproj
 
       - name: Build PluginLoaderInstaller.exe
         run: |
           msbuild -t:restore -p:RestorePackagesConfig=true pulsar\PluginLoader.sln
-          msbuild -t:Build -p:OutputPath=..\..\master\PluginLoaderInstaller\Assets\Plugins,Configuration=Release,Platform=x64,TargetFrameworkVersion=v4.8 pluginloader\PluginLoader\PluginLoader.csproj
+          msbuild -t:Build -p:OutputPath=..\..\master\PluginLoaderInstaller\Assets,Configuration=Release,Platform=x64 master\PluginLoaderInstaller\PluginLoaderInstaller.csproj
 
       - name: Upload a Build Artifact
         uses: actions/upload-artifact@v4.6.2
