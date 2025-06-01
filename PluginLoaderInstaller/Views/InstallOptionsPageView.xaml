@@ -27,11 +27,15 @@
         <TextBlock Text="Additional Settings" Margin="0,24,0,0" />
         <!--Add To SE Launch Options-->
         <CheckBox IsChecked="{Binding AddLaunchOptions}" Margin="0,8,0,0">
-            <TextBlock Text="{Binding Path=(base:App.InstalledAppName), Mode=OneWay, StringFormat={}Add to SE launch options. This will make starting SE automatically run {0}.}" />
+            <TextBlock Text="{Binding Path=(base:App.InstalledAppName), Mode=OneWay, StringFormat={}Add to SE launch options. This will make starting SE automatically run {0}. (Steam will restart.)}" />
         </CheckBox>
         <!--Add As Non-Steam Game-->
-        <CheckBox IsChecked="{Binding AddAsNonSteamGame}" Margin="0,8,0,0" IsEnabled="False">
+        <!--<CheckBox IsChecked="{Binding AddAsNonSteamGame}" Margin="0,8,0,0" IsEnabled="False">
             <TextBlock Text="{Binding Path=(base:App.InstalledAppName), Mode=OneWay, StringFormat={}Add {0} as a Non-Steam Game}" />
+        </CheckBox>-->
+        <!--SkipIntro Launch Option-->
+        <CheckBox IsChecked="{Binding SkipIntroFlag}" Margin="0,8,0,0">
+            <TextBlock Text="Add -skipintro flag to SE launch options (Steam will restart)" />
         </CheckBox>
 
         <!--<Button Command="{Binding ParseTestCommand}" Content="test button" />-->

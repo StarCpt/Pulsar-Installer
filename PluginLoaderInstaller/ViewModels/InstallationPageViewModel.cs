@@ -46,7 +46,7 @@ public partial class InstallationPageViewModel(MainViewModel mainViewModel) : Pa
         {
             InstallOptions options = MainViewModel.GetInstallOptions();
 
-            bool needToCloseSteam = options.AddLaunchOptions || options.AddAsNonSteamGame;
+            bool needToCloseSteam = options.AddLaunchOptions || options.AddAsNonSteamGame || options.SkipIntroFlag;
             bool steamClosed = false;
             if (needToCloseSteam && SteamHelpers.IsSteamRunning())
             {
@@ -100,15 +100,15 @@ public partial class InstallationPageViewModel(MainViewModel mainViewModel) : Pa
 
             WriteLogNewline();
 
-            bool addNewline = options.AddLaunchOptions || options.AddAsNonSteamGame || steamClosed;
-            if (options.AddLaunchOptions)
+            bool addNewline = options.AddLaunchOptions || options.AddAsNonSteamGame || options.SkipIntroFlag || steamClosed;
+            if (options.AddLaunchOptions || options.SkipIntroFlag)
             {
-                AddLaunchOptions();
+                AddLaunchOptions(options.AddLaunchOptions, options.SkipIntroFlag);
             }
 
             if (options.AddAsNonSteamGame)
             {
-                AddAsNonSteamGame();
+                //AddAsNonSteamGame();
             }
 
             if (steamClosed)
@@ -143,9 +143,24 @@ public partial class InstallationPageViewModel(MainViewModel mainViewModel) : Pa
         WriteLog($"Environment.Is64BitProcess: {Environment.Is64BitProcess}");
     }
 
-    private void AddLaunchOptions()
+    private void AddLaunchOptions(bool addLaunchOptions, bool skipIntroFlag)
     {
-        WriteLog($"Adding {App.InstalledAppName} to Space Engineers launch options.");
+        string launchOptionsStr = "";
+        if (addLaunchOptions)
+        {
+            WriteLog($"Adding {App.InstalledAppName} to Space Engineers launch options.");
+            if (launchOptionsStr.Length != 0)
+                launchOptionsStr += " ";
+            launchOptionsStr += "\\\"SpaceEngineersLauncher\\\" %command%";
+        }
+
+        if (skipIntroFlag)
+        {
+            WriteLog($"Adding -skipintro to Space Engineers launch options.");
+            if (launchOptionsStr.Length != 0)
+                launchOptionsStr += " ";
+            launchOptionsStr += "-skipintro";
+        }
 
         // read localconfigs.vdf
         string userDataDir = Path.Combine(SteamHelpers.TryGetSteamPath()!, "userdata");
@@ -165,13 +180,15 @@ public partial class InstallationPageViewModel(MainViewModel mainViewModel) : Pa
             if (seProperties != null)
             {
                 // Check if launch options are already set
-                if (seProperties.TryGetValue("LaunchOptions") is VdfKeyValue kv && kv.Value.Contains("\\\"SpaceEngineersLauncher\\\" %command%"))
+                if (seProperties.TryGetValue("LaunchOptions") is VdfKeyValue kv &&
+                    (!addLaunchOptions || kv.Value.Contains("\\\"SpaceEngineersLauncher\\\" %command%")) &&
+                    (!skipIntroFlag || kv.Value.Contains("-skipintro")))
                     continue;
 
                 seProperties["LaunchOptions"] = new VdfKeyValue
                 {
                     Key = "LaunchOptions",
-                    Value = "\\\"SpaceEngineersLauncher\\\" %command%",
+                    Value = launchOptionsStr,
                 };
 
                 if (!SIMULATE_INSTALLATION)

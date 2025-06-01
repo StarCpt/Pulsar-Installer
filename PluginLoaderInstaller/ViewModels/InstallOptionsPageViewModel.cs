@@ -26,6 +26,8 @@ public partial class InstallOptionsPageViewModel(MainViewModel mainViewModel) : 
     public partial bool AddLaunchOptions { get; set; } = false;
     [ObservableProperty]
     public partial bool AddAsNonSteamGame { get; set; } = false;
+    [ObservableProperty]
+    public partial bool SkipIntroFlag { get; set; } = false;
 
     private static string? TryFindBin64Path()
     {
