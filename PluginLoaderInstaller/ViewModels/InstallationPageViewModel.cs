@@ -74,6 +74,10 @@ public partial class InstallationPageViewModel(MainViewModel mainViewModel) : Pa
             int fileIndex = 1;
             foreach (var entry in archive.Entries)
             {
+                // Skip if directory
+                if (entry.FullName.EndsWith("/"))
+                    continue;
+
                 string filePath = Path.Combine(options.Bin64Path, entry.FullName);
 
                 Directory.CreateDirectory(Path.GetDirectoryName(filePath)!);

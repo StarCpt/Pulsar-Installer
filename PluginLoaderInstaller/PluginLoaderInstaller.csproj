@@ -12,25 +12,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Assets\pluginloader.zip" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="Assets\Binaries\0Harmony.dll" />
-    <EmbeddedResource Include="Assets\Binaries\Mono.Cecil.dll" />
-    <EmbeddedResource Include="Assets\Binaries\Mono.Cecil.Mdb.dll" />
-    <EmbeddedResource Include="Assets\Binaries\Mono.Cecil.Pdb.dll" />
-    <EmbeddedResource Include="Assets\Binaries\Mono.Cecil.Rocks.dll" />
-    <EmbeddedResource Include="Assets\Binaries\Newtonsoft.Json.dll" />
-    <EmbeddedResource Include="Assets\Binaries\NuGet.Common.dll" />
-    <EmbeddedResource Include="Assets\Binaries\NuGet.Configuration.dll" />
-    <EmbeddedResource Include="Assets\Binaries\NuGet.Frameworks.dll" />
-    <EmbeddedResource Include="Assets\Binaries\NuGet.Packaging.dll" />
-    <EmbeddedResource Include="Assets\Binaries\NuGet.Protocol.dll" />
-    <EmbeddedResource Include="Assets\Binaries\NuGet.Resolver.dll" />
-    <EmbeddedResource Include="Assets\Binaries\NuGet.Versioning.dll" />
-    <EmbeddedResource Include="Assets\Binaries\PluginLoader.dll" />
-    <EmbeddedResource Include="Assets\Binaries\SpaceEngineersLauncher.exe" />
+    <EmbeddedResource Include="Assets\**" />
   </ItemGroup>
 
   <ItemGroup>
