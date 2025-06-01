@@ -29,7 +29,7 @@ public partial class InstallationPageViewModel(MainViewModel mainViewModel) : Pa
     public partial double? InstallProgress { get; private set; } = 0;
     public StringBuilder Log { get; } = new StringBuilder();
 
-    private const bool SIMULATE_INSTALLATION = true; // doesn't close steam and doesn't actually unpack files to bin64
+    private const bool SIMULATE_INSTALLATION = false; // doesn't close steam and doesn't actually unpack files to bin64
 
     public async void Install()
     {
