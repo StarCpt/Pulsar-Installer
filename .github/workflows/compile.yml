@@ -51,11 +51,11 @@ jobs:
       - name: Add msbuild to PATH
         uses: microsoft/setup-msbuild@v1.1
 
-      - name: Build SpaceEngineersLauncher.exe
-        run: |
-          cmd /c mklink /J launcher\Bin64 se\DedicatedServer64
-          msbuild -t:restore -p:RestorePackagesConfig=true launcher\SpaceEngineersLauncher.sln
-          msbuild -t:Build -p:OutputPath=..\..\master\PluginLoaderInstaller\Assets,Configuration=Release,Platform=x64,TargetFrameworkVersion=v4.8 launcher\SpaceEngineersLauncher\SpaceEngineersLauncher.csproj
+      #- name: Build SpaceEngineersLauncher.exe
+      #  run: |
+      #    cmd /c mklink /J launcher\Bin64 se\DedicatedServer64
+      #    msbuild -t:restore -p:RestorePackagesConfig=true launcher\SpaceEngineersLauncher.sln
+      #    msbuild -t:Build -p:OutputPath=..\..\master\PluginLoaderInstaller\Assets,Configuration=Release,Platform=x64,TargetFrameworkVersion=v4.8 launcher\SpaceEngineersLauncher\SpaceEngineersLauncher.csproj
           
       - name: Build loader.dll
         run: |
