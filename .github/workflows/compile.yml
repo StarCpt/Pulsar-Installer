@@ -53,19 +53,18 @@ jobs:
 
       - name: Build SpaceEngineersLauncher.exe
         run: |
-          cmd /c mklink /J tools\Bin64 se\DedicatedServer64
+          cmd /c mklink /J launcher\Bin64 se\DedicatedServer64
           msbuild -t:restore -p:RestorePackagesConfig=true launcher\SpaceEngineersLauncher.sln
           msbuild -t:Build -p:OutputPath=..\..\master\PluginLoaderInstaller\Assets,Configuration=Release,Platform=x64,TargetFrameworkVersion=v4.8 launcher\SpaceEngineersLauncher\SpaceEngineersLauncher.csproj
           
       - name: Build loader.dll
         run: |
-          cmd /c mklink /J pluginloader\Bin64 se\DedicatedServer64
+          cmd /c mklink /J pulsar\Bin64 se\DedicatedServer64
           msbuild -t:restore -p:RestorePackagesConfig=true pulsar\PluginLoader.sln
           msbuild -t:Build -p:OutputPath=..\..\master\PluginLoaderInstaller\Assets\Plugins,Configuration=Release,Platform=x64,TargetFrameworkVersion=v4.8 pluginloader\PluginLoader\PluginLoader.csproj
 
       - name: Build PluginLoaderInstaller.exe
         run: |
-          cmd /c mklink /J pluginloader\Bin64 se\DedicatedServer64
           msbuild -t:restore -p:RestorePackagesConfig=true pulsar\PluginLoader.sln
           msbuild -t:Build -p:OutputPath=..\..\master\PluginLoaderInstaller\Assets\Plugins,Configuration=Release,Platform=x64,TargetFrameworkVersion=v4.8 pluginloader\PluginLoader\PluginLoader.csproj
 
