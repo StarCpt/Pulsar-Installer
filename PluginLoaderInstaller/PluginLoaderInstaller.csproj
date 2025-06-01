@@ -1,0 +1,46 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net9.0-windows7.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <LangVersion>preview</LangVersion>
+    <IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
+    <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Assets\pluginloader.zip" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Assets\Binaries\0Harmony.dll" />
+    <EmbeddedResource Include="Assets\Binaries\Mono.Cecil.dll" />
+    <EmbeddedResource Include="Assets\Binaries\Mono.Cecil.Mdb.dll" />
+    <EmbeddedResource Include="Assets\Binaries\Mono.Cecil.Pdb.dll" />
+    <EmbeddedResource Include="Assets\Binaries\Mono.Cecil.Rocks.dll" />
+    <EmbeddedResource Include="Assets\Binaries\Newtonsoft.Json.dll" />
+    <EmbeddedResource Include="Assets\Binaries\NuGet.Common.dll" />
+    <EmbeddedResource Include="Assets\Binaries\NuGet.Configuration.dll" />
+    <EmbeddedResource Include="Assets\Binaries\NuGet.Frameworks.dll" />
+    <EmbeddedResource Include="Assets\Binaries\NuGet.Packaging.dll" />
+    <EmbeddedResource Include="Assets\Binaries\NuGet.Protocol.dll" />
+    <EmbeddedResource Include="Assets\Binaries\NuGet.Resolver.dll" />
+    <EmbeddedResource Include="Assets\Binaries\NuGet.Versioning.dll" />
+    <EmbeddedResource Include="Assets\Binaries\PluginLoader.dll" />
+    <EmbeddedResource Include="Assets\Binaries\SpaceEngineersLauncher.exe" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+    <PackageReference Include="Gameloop.Vdf" Version="0.6.2" />
+    <PackageReference Include="Gameloop.Vdf.JsonConverter" Version="0.2.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BinaryVdfSharp\VdfSharp.csproj" />
+  </ItemGroup>
+
+</Project>

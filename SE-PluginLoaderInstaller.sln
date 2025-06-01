@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35825.156
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PluginLoaderInstaller", "PluginLoaderInstaller\PluginLoaderInstaller.csproj", "{514FB12A-4582-42A2-BFA9-C7B96ACD6F52}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VdfSharp", "BinaryVdfSharp\VdfSharp.csproj", "{FDFE8511-9190-45C1-8E32-C2AB7605C2A2}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{514FB12A-4582-42A2-BFA9-C7B96ACD6F52}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{514FB12A-4582-42A2-BFA9-C7B96ACD6F52}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{514FB12A-4582-42A2-BFA9-C7B96ACD6F52}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{514FB12A-4582-42A2-BFA9-C7B96ACD6F52}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FDFE8511-9190-45C1-8E32-C2AB7605C2A2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FDFE8511-9190-45C1-8E32-C2AB7605C2A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FDFE8511-9190-45C1-8E32-C2AB7605C2A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FDFE8511-9190-45C1-8E32-C2AB7605C2A2}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D1AAC144-D743-4621-81BE-95D33CB45BCD}
+	EndGlobalSection
+EndGlobal
