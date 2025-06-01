@@ -31,13 +31,13 @@ jobs:
           path: pulsar
           repository: 'SpaceGT/Pulsar'
 
-      - name: Space Engineers cache
-        uses: actions/cache@v3.2.5
-        with:
-          # A list of files, directories, and wildcard patterns to cache and restore
-          path: se\
-          # An explicit key for restoring and saving the cache
-          key: seds
+      #- name: Space Engineers cache
+      #  uses: actions/cache@v3.2.5
+      #  with:
+      #    # A list of files, directories, and wildcard patterns to cache and restore
+      #    path: se\
+      #    # An explicit key for restoring and saving the cache
+      #    key: seds
 
       # Install SteamCMD
       - name: Setup SteamCMD
