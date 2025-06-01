@@ -1,4 +1,4 @@
-﻿namespace PluginLoaderInstaller.ViewModels;
+﻿namespace PulsarInstaller.ViewModels;
 
 public class LicensePageViewModel(MainViewModel mainViewModel) : PageViewModelBase(mainViewModel)
 {

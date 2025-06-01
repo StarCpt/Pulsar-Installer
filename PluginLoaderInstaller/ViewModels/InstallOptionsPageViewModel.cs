@@ -4,10 +4,10 @@ using Gameloop.Vdf;
 using Gameloop.Vdf.JsonConverter;
 using Gameloop.Vdf.Linq;
 using Microsoft.Win32;
-using PluginLoaderInstaller.Models.Vdf;
+using PulsarInstaller.Models.Vdf;
 using System.IO;
 
-namespace PluginLoaderInstaller.ViewModels;
+namespace PulsarInstaller.ViewModels;
 
 public partial class InstallOptionsPageViewModel(MainViewModel mainViewModel) : PageViewModelBase(mainViewModel)
 {

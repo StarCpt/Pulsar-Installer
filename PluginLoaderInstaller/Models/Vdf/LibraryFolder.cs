@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PluginLoaderInstaller.Models.Vdf;
+namespace PulsarInstaller.Models.Vdf;
 
 public class LibraryFolder
 {

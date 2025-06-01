@@ -1,7 +1,7 @@
-﻿using PluginLoaderInstaller.ViewModels;
+﻿using PulsarInstaller.ViewModels;
 using System.Windows;
 
-namespace PluginLoaderInstaller;
+namespace PulsarInstaller;
 
 /// <summary>
 /// Interaction logic for App.xaml

@@ -1,7 +1,7 @@
 ﻿using Microsoft.Win32;
 using System.Diagnostics;
 
-namespace PluginLoaderInstaller;
+namespace PulsarInstaller;
 
 public static class SteamHelpers
 {

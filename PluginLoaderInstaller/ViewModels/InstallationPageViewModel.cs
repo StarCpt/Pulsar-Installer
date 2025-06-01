@@ -7,7 +7,7 @@ using System.Reflection;
 using System.Text;
 using System.Windows.Media;
 
-namespace PluginLoaderInstaller.ViewModels;
+namespace PulsarInstaller.ViewModels;
 
 public partial class InstallationPageViewModel(MainViewModel mainViewModel) : PageViewModelBase(mainViewModel)
 {
@@ -66,7 +66,7 @@ public partial class InstallationPageViewModel(MainViewModel mainViewModel) : Pa
                 WriteLogNewline();
             }
 
-            string embeddedResourcePath = String.Join('.', nameof(PluginLoaderInstaller), "Assets", "pluginloader.zip");
+            string embeddedResourcePath = String.Join('.', nameof(PulsarInstaller), "Assets", "pluginloader.zip");
             Stream archiveStream = Assembly.GetExecutingAssembly().GetManifestResourceStream(embeddedResourcePath) ?? throw new Exception("Installation Failed");
             using ZipArchive archive = new(archiveStream);
 

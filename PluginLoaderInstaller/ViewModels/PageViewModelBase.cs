@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PluginLoaderInstaller.ViewModels;
+namespace PulsarInstaller.ViewModels;
 
 public abstract class PageViewModelBase(MainViewModel mainViewModel) : ObservableObject
 {

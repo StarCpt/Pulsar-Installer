@@ -2,7 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using System.Linq;
 
-namespace PluginLoaderInstaller.ViewModels;
+namespace PulsarInstaller.ViewModels;
 
 public readonly record struct InstallOptions
 {
