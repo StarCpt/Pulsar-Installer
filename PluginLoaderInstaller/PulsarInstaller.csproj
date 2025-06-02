@@ -13,7 +13,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Assets\**" />
+    <EmbeddedResource Include="Assets\pluginloader.zip" />
   </ItemGroup>
 
   <ItemGroup>
