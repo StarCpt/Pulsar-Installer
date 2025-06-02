@@ -66,6 +66,11 @@ public partial class InstallationPageViewModel(MainViewModel mainViewModel) : Pa
                 WriteLogNewline();
             }
 
+            if (options.RemovePluginLoader)
+            {
+                RemovePluginLoaderFiles(options.Bin64Path);
+            }
+
             string embeddedResourcePath = String.Join('.', nameof(PulsarInstaller), "Assets", "pluginloader.zip");
             Stream archiveStream = Assembly.GetExecutingAssembly().GetManifestResourceStream(embeddedResourcePath) ?? throw new Exception("Installation Failed");
             using ZipArchive archive = new(archiveStream);
@@ -219,6 +224,39 @@ public partial class InstallationPageViewModel(MainViewModel mainViewModel) : Pa
         }
 
         throw new NotImplementedException();
+    }
+
+    private void RemovePluginLoaderFiles(string bin64Path)
+    {
+        bool pluginLoaderInstalled = File.Exists(Path.Combine(bin64Path, "PluginLoader.dll"));
+        if (pluginLoaderInstalled)
+        {
+            WriteLog("Removing existing Plugin Loader installation.");
+
+            string[] pluginLoaderFiles =
+            {
+                "PluginLoader.dll",
+                "0Harmony.dll",
+                "Newtonsoft.Json.dll",
+                "NuGet.Common.dll",
+                "NuGet.Configuration.dll",
+                "NuGet.Frameworks.dll",
+                "NuGet.Packaging.dll",
+                "NuGet.Protocol.dll",
+                "NuGet.Resolver.dll",
+                "NuGet.Versioning.dll",
+            };
+
+            foreach (var file in pluginLoaderFiles)
+            {
+                string filePath = Path.Combine(bin64Path, file);
+                if (File.Exists(filePath))
+                {
+                    WriteLog($"Deleting {file}");
+                    File.Delete(filePath);
+                }
+            }
+        }
     }
 
     private void WriteLog(string str)

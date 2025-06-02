@@ -10,6 +10,7 @@ public readonly record struct InstallOptions
     public required bool AddLaunchOptions { get; init; }
     public required bool AddAsNonSteamGame { get; init; }
     public required bool SkipIntroFlag { get; init; }
+    public required bool RemovePluginLoader { get; init; }
 }
 
 public partial class MainViewModel : ObservableObject
@@ -43,6 +44,7 @@ public partial class MainViewModel : ObservableObject
             AddLaunchOptions = optionsPageVm.AddLaunchOptions,
             AddAsNonSteamGame = optionsPageVm.AddAsNonSteamGame,
             SkipIntroFlag = optionsPageVm.SkipIntroFlag,
+            RemovePluginLoader = optionsPageVm.RemovePluginLoader,
         };
     }
 

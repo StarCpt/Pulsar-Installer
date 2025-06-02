@@ -37,6 +37,10 @@
         <CheckBox IsChecked="{Binding SkipIntroFlag}" Margin="0,8,0,0">
             <TextBlock Text="Add -skipintro flag to SE launch options (Steam will restart)" />
         </CheckBox>
+        <!--Remove PL Files-->
+        <CheckBox IsChecked="{Binding RemovePluginLoader}" Margin="0,8,0,0">
+            <TextBlock Text="Remove existing Plugin Loader files" />
+        </CheckBox>
 
         <!--<Button Command="{Binding ParseTestCommand}" Content="test button" />-->
     </StackPanel>
