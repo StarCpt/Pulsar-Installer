@@ -1,0 +1,6 @@
+[submodule "SpaceEngineersLauncher"]
+	path = SpaceEngineersLauncher
+	url = ./SpaceEngineersLauncher
+[submodule "Pulsar"]
+	path = Pulsar
+	url = ./Pulsar
