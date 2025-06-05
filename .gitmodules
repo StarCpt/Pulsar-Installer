@@ -1,6 +1,8 @@
 [submodule "SpaceEngineersLauncher"]
 	path = SpaceEngineersLauncher
-	url = ./SpaceEngineersLauncher
+	url = https://github.com/StarCpt/SpaceEngineersLauncher
+	branch = main
 [submodule "Pulsar"]
 	path = Pulsar
-	url = ./Pulsar
+	url = https://github.com/SpaceGT/Pulsar
+	branch = main
