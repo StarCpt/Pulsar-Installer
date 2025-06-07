@@ -38,6 +38,11 @@ public partial class InstallationPageViewModel(MainViewModel mainViewModel) : Pa
         InstallProgress = 0;
         WriteLog($"Installing {App.InstalledAppName} v{App.InstalledAppVersion}.");
 
+        if (SIMULATE_INSTALLATION)
+        {
+            WriteLog("Simulated Installatin is enabld");
+        }
+
         WriteLogNewline();
         WriteEnvironmentInfo();
         WriteLogNewline();

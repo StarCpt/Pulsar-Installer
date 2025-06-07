@@ -88,7 +88,34 @@ namespace VdfSharp
                         case '}':
                             return TokenType.ClosingBracket;
                         default:
-                            throw new Exception();
+                            // print info about where the unexpected token occurred
+                            int currentCharIndex = i - 1;
+                            string[] allLines = text.Split('\n');
+                            int currentLineIndex = -1;
+                            for (int lineIndex = 0, charCount = 0; lineIndex < allLines.Length; lineIndex++)
+                            {
+                                charCount += allLines[lineIndex].Length;
+                                if (lineIndex > 0)
+                                    charCount++;
+
+                                if (charCount > currentCharIndex)
+                                {
+                                    currentLineIndex = lineIndex;
+                                    break;
+                                }
+                            }
+
+                            string? prevLine = (currentLineIndex - 1) >= 0 ? allLines[currentLineIndex - 1] : null;
+                            string currentLine = allLines[currentLineIndex];
+                            string? nextLine = (currentLineIndex + 1) < allLines.Length ? allLines[currentLineIndex + 1] : null;
+
+                            throw new Exception($"Unexpected Token." +
+                                $"\nToken={text[currentCharIndex]}," +
+                                $"\nTokenIndex={currentCharIndex}" +
+                                $"\nLineNum={currentLineIndex + 1}," +
+                                $"\nPrevLine={prevLine}," +
+                                $"\nCurrLine={currentLine}," +
+                                $"\nNextLine={nextLine},");
                     }
                 }
             }
@@ -102,12 +129,18 @@ namespace VdfSharp
                 while (true)
                 {
                     char c = text[i++];
-                    if (c == '\"' && !escape)
-                        break;
                     if (escape)
+                    {
                         escape = false;
-                    if (c == '\\' && !escape)
+                    }
+                    else if (c == '\\')
+                    {
                         escape = true;
+                    }
+                    else if (c == '\"')
+                    {
+                        break;
+                    }
                     length++;
                 }
                 return text.Substring(startIndex, length);
