@@ -17,6 +17,7 @@ msbuild -t:Build -p:OutputPath=..\..\PluginLoaderInstaller\Assets,Configuration=
 
 :: Remove unneeded files
 del PluginLoaderInstaller\Assets\*.pdb
+del PluginLoaderInstaller\Assets\SpaceEngineersLauncher.exe.config
 
 :: Create ZIP archive with proper paths
 mkdir PluginLoaderInstaller\Assets\Plugins\Libraries
