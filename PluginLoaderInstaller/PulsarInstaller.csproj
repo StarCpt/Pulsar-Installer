@@ -27,7 +27,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\BinaryVdfSharp\VdfSharp.csproj" />
+    <ProjectReference Include="..\VdfSharp\VdfSharp.csproj" />
   </ItemGroup>
 
 </Project>

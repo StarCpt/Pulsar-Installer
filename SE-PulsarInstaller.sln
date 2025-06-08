@@ -5,7 +5,7 @@ VisualStudioVersion = 17.13.35825.156
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PulsarInstaller", "PluginLoaderInstaller\PulsarInstaller.csproj", "{514FB12A-4582-42A2-BFA9-C7B96ACD6F52}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VdfSharp", "BinaryVdfSharp\VdfSharp.csproj", "{FDFE8511-9190-45C1-8E32-C2AB7605C2A2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VdfSharp", "VdfSharp\VdfSharp.csproj", "{FDFE8511-9190-45C1-8E32-C2AB7605C2A2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
