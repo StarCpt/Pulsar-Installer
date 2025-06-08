@@ -22,7 +22,7 @@ del PluginLoaderInstaller\Assets\SpaceEngineersLauncher.exe.config
 :: Create ZIP archive with proper paths
 mkdir PluginLoaderInstaller\Assets\Plugins\Libraries
 
-move PluginLoaderInstaller\Assets\PluginLoader.dll PluginLoaderInstaller\Assets\Plugins\loader.dll
+move PluginLoaderInstaller\Assets\Pulsar.dll PluginLoaderInstaller\Assets\Plugins\loader.dll
 move PluginLoaderInstaller\Assets\*.dll PluginLoaderInstaller\Assets\Plugins\Libraries\
 
 powershell Compress-Archive .\PluginLoaderInstaller\Assets\* .\PluginLoaderInstaller\Assets\pluginloader.zip
