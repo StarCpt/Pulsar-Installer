@@ -25,6 +25,13 @@
         </Grid>
 
         <TextBlock Text="Additional Settings" Margin="0,24,0,0" />
+
+        <CheckBox Content="Install Pulsar" IsChecked="True" IsEnabled="False" Margin="0,8,0,0" />
+        <CheckBox Content="Install SpaceEngineersLauncher" IsChecked="True" IsEnabled="False" Margin="0,8,0,0" />
+
+        <!--Remove PL Files-->
+        <CheckBox Content="Remove existing Plugin Loader files" IsChecked="{Binding RemovePluginLoader}" Margin="0,8,0,0" IsEnabled="False" />
+
         <!--Add To SE Launch Options-->
         <CheckBox IsChecked="{Binding AddLaunchOptions}" Margin="0,8,0,0">
             <TextBlock Text="{Binding Path=(base:App.InstalledAppName), Mode=OneWay, StringFormat={}Add to SE launch options. This will make starting SE automatically run {0}. (Steam will restart.)}" />
@@ -36,10 +43,6 @@
         <!--SkipIntro Launch Option-->
         <CheckBox IsChecked="{Binding SkipIntroFlag}" Margin="0,8,0,0">
             <TextBlock Text="Add -skipintro flag to SE launch options (Steam will restart)" />
-        </CheckBox>
-        <!--Remove PL Files-->
-        <CheckBox IsChecked="{Binding RemovePluginLoader}" Margin="0,8,0,0" IsEnabled="False">
-            <TextBlock Text="Remove existing Plugin Loader files" />
         </CheckBox>
     </StackPanel>
 </UserControl>
