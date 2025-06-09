@@ -6,6 +6,8 @@ using System.IO.Compression;
 using System.Reflection;
 using System.Text;
 using System.Windows.Media;
+using avaness.SpaceEngineersLauncher;
+using System.Diagnostics;
 
 namespace PulsarInstaller.ViewModels;
 
@@ -107,6 +109,11 @@ public partial class InstallationPageViewModel(MainViewModel mainViewModel) : Pa
 
                 await Task.Delay(10);
             }
+
+            WriteLogNewline();
+
+            // update launcher.xml with the new version and file list
+            UpdateLauncherXml(options.Bin64Path, archive.Entries.Select(i => i.FullName).Where(i => i.StartsWith("Plugins")));
 
             WriteLogNewline();
 
@@ -231,6 +238,20 @@ public partial class InstallationPageViewModel(MainViewModel mainViewModel) : Pa
         throw new NotImplementedException();
     }
 
+    private void UpdateLauncherXml(string bin64Path, IEnumerable<string> files)
+    {
+        WriteLog("Updating launcher.xml");
+
+        var pulsarVersion = FileVersionInfo.GetVersionInfo(Path.Combine(bin64Path, "Plugins", "loader.dll"));
+        string pulsarVersionStr = $"v{pulsarVersion.FileMajorPart}.{pulsarVersion.FileMinorPart}.{pulsarVersion.FileBuildPart}";
+
+        string launcherXmlPath = Path.Combine(bin64Path, "Plugins", "launcher.xml");
+        var config = ConfigFile.Load(launcherXmlPath);
+        config.LoaderVersion = pulsarVersionStr;
+        config.Files = files.ToArray();
+        config.Save();
+    }
+
     private void RemovePluginLoaderFiles(string bin64Path)
     {
         bool pluginLoaderInstalled = File.Exists(Path.Combine(bin64Path, "PluginLoader.dll"));
@@ -261,6 +282,8 @@ public partial class InstallationPageViewModel(MainViewModel mainViewModel) : Pa
                     File.Delete(filePath);
                 }
             }
+
+            WriteLogNewline();
         }
     }
 
