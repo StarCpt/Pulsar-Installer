@@ -55,7 +55,6 @@ public partial class MainViewModel : ObservableObject
         if (pageIndex == 0)
             return;
         Page = _pages[pageIndex - 1];
-
     }
 
     [RelayCommand]

@@ -28,7 +28,7 @@ namespace VdfSharp.Data
             }
         }
 
-        public VdfBase TryGetValue(string key) => Values.FirstOrDefault(i => i.Key == key);
-        public T TryGetValue<T>(string key) where T : VdfBase => Values.OfType<T>().FirstOrDefault(i => i.Key == key);
+        public VdfBase? TryGetValue(string key, StringComparison comparison = StringComparison.Ordinal) => Values.FirstOrDefault(i => string.Equals(i.Key, key, comparison));
+        public T? TryGetValue<T>(string key, StringComparison comparison = StringComparison.Ordinal) where T : VdfBase => Values.OfType<T>().FirstOrDefault(i => string.Equals(i.Key, key, comparison));
     }
 }

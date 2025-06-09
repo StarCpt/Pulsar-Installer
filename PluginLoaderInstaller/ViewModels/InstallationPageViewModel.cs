@@ -188,10 +188,10 @@ public partial class InstallationPageViewModel(MainViewModel mainViewModel) : Pa
 
             var userLocalConfig = VdfSerializer.Deserialize(userLocalConfigPath);
             var seProperties = userLocalConfig
-                .TryGetValue<VdfProperty>("Software")?
-                .TryGetValue<VdfProperty>("Valve")?
-                .TryGetValue<VdfProperty>("Steam")?
-                .TryGetValue<VdfProperty>("apps")?
+                .TryGetValue<VdfProperty>("Software", StringComparison.OrdinalIgnoreCase)?
+                .TryGetValue<VdfProperty>("Valve", StringComparison.OrdinalIgnoreCase)?
+                .TryGetValue<VdfProperty>("Steam", StringComparison.OrdinalIgnoreCase)?
+                .TryGetValue<VdfProperty>("apps", StringComparison.OrdinalIgnoreCase)?
                 .TryGetValue<VdfProperty>("244850");
 
             if (seProperties != null)
@@ -249,7 +249,11 @@ public partial class InstallationPageViewModel(MainViewModel mainViewModel) : Pa
         var config = ConfigFile.Load(launcherXmlPath);
         config.LoaderVersion = pulsarVersionStr;
         config.Files = files.ToArray();
-        config.Save();
+
+        if (!SIMULATE_INSTALLATION)
+        {
+            config.Save();
+        }
     }
 
     private void RemovePluginLoaderFiles(string bin64Path)
@@ -279,7 +283,11 @@ public partial class InstallationPageViewModel(MainViewModel mainViewModel) : Pa
                 if (File.Exists(filePath))
                 {
                     WriteLog($"Deleting {file}");
-                    File.Delete(filePath);
+
+                    if (!SIMULATE_INSTALLATION)
+                    {
+                        File.Delete(filePath);
+                    }
                 }
             }
 
