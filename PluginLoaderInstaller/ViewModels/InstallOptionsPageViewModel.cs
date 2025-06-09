@@ -29,7 +29,7 @@ public partial class InstallOptionsPageViewModel(MainViewModel mainViewModel) : 
     [ObservableProperty]
     public partial bool SkipIntroFlag { get; set; } = false;
     [ObservableProperty]
-    public partial bool RemovePluginLoader { get; set; } = false;
+    public partial bool RemovePluginLoader { get; set; } = true;
 
     private static string? TryFindBin64Path()
     {
