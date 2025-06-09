@@ -12,7 +12,6 @@ public class LicensePageViewModel(MainViewModel mainViewModel) : PageViewModelBa
     public string LicenseText { get; } = """
 MIT License
 
-Copyright (c) 2021 austinvaness
 Copyright (c) 2025 SpaceGT
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
