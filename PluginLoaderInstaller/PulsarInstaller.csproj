@@ -12,9 +12,9 @@
     <ApplicationIcon>pulsar.ico</ApplicationIcon>
   </PropertyGroup>
 
-  <ItemGroup>
+  <!--<ItemGroup>
     <EmbeddedResource Include="Assets\pluginloader.zip" />
-  </ItemGroup>
+  </ItemGroup>-->
 
   <ItemGroup>
     <Content Include="pulsar.ico" />
@@ -27,6 +27,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Pulsar\Shared\Shared.csproj" />
     <ProjectReference Include="..\VdfSharp\VdfSharp.csproj" />
   </ItemGroup>
 

@@ -27,10 +27,10 @@
         <TextBlock Text="Additional Settings" Margin="0,24,0,0" />
 
         <CheckBox Content="Install Pulsar" IsChecked="True" IsEnabled="False" Margin="0,8,0,0" />
-        <CheckBox Content="Install SpaceEngineersLauncher" IsChecked="True" IsEnabled="False" Margin="0,8,0,0" />
+        <!--<CheckBox Content="Install SpaceEngineersLauncher" IsChecked="True" IsEnabled="False" Margin="0,8,0,0" />-->
 
         <!--Remove PL Files-->
-        <CheckBox Content="Remove existing Plugin Loader files" IsChecked="{Binding RemovePluginLoader}" Margin="0,8,0,0" IsEnabled="False" />
+        <!--<CheckBox Content="Remove existing Plugin Loader files" IsChecked="{Binding RemovePluginLoader}" Margin="0,8,0,0" IsEnabled="False" />-->
 
         <!--Add To SE Launch Options-->
         <CheckBox IsChecked="{Binding AddLaunchOptions}" Margin="0,8,0,0">

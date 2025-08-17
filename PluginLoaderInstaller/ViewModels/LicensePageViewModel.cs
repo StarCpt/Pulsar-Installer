@@ -2,7 +2,7 @@
 
 public class LicensePageViewModel(MainViewModel mainViewModel) : PageViewModelBase(mainViewModel)
 {
-    public override string Header => $"Install {App.InstalledAppName} v{App.InstalledAppVersion} for Space Engineers";
+    public override string Header => $"Install {App.InstalledAppName} for Space Engineers";
     public override string Description => $"Please read the license for {App.InstalledAppName}.";
 
     public override bool BackButtonEnabled => false;

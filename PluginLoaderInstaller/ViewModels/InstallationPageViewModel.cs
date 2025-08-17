@@ -3,11 +3,8 @@ using VdfSharp.Data;
 using CommunityToolkit.Mvvm.ComponentModel;
 using System.IO;
 using System.IO.Compression;
-using System.Reflection;
 using System.Text;
 using System.Windows.Media;
-using avaness.SpaceEngineersLauncher;
-using System.Diagnostics;
 
 namespace PulsarInstaller.ViewModels;
 
@@ -31,19 +28,23 @@ public partial class InstallationPageViewModel(MainViewModel mainViewModel) : Pa
     public partial double? InstallProgress { get; private set; } = 0;
     public StringBuilder Log { get; } = new StringBuilder();
 
-    private const bool SIMULATE_INSTALLATION = false; // doesn't close steam and doesn't actually unpack files to bin64
-
     public async void Install()
     {
         Log.Clear();
 
         InstallProgress = 0;
-        WriteLog($"Installing {App.InstalledAppName} v{App.InstalledAppVersion}.");
+        WriteLog($"Installing {App.InstalledAppName}.");
 
-        if (SIMULATE_INSTALLATION)
+        WriteLog("Fetching version info.");
+
+        // get latest version info
+        var (latestVer, latestReleaseInfo) = await App.TryGetLatestVersion();
+        if (!latestVer.HasValue)
         {
-            WriteLog("Simulated Installatin is enabld");
+            throw new Exception("Could not fetch latest version.");
         }
+
+        WriteLog($"Latest Version: v{latestVer.Value.Major}.{latestVer.Value.Minor}.{latestVer.Value.Patch}");
 
         WriteLogNewline();
         WriteEnvironmentInfo();
@@ -61,14 +62,7 @@ public partial class InstallationPageViewModel(MainViewModel mainViewModel) : Pa
                 WriteLog("One or more installation options selected requires Steam to be closed.");
                 WriteLog("Waiting for Steam to exit.");
 
-                if (!SIMULATE_INSTALLATION)
-                {
-                    await SteamHelpers.CloseSteamAsync(true);
-                }
-                else
-                {
-                    await Task.Delay(2000);
-                }
+                await SteamHelpers.CloseSteamAsync(true);
 
                 WriteLogNewline();
             }
@@ -78,19 +72,26 @@ public partial class InstallationPageViewModel(MainViewModel mainViewModel) : Pa
                 RemovePluginLoaderFiles(options.Bin64Path);
             }
 
-            string embeddedResourcePath = String.Join('.', nameof(PulsarInstaller), "Assets", "pluginloader.zip");
-            Stream archiveStream = Assembly.GetExecutingAssembly().GetManifestResourceStream(embeddedResourcePath) ?? throw new Exception("Installation Failed");
-            using ZipArchive archive = new(archiveStream);
+            // download latest release asset zip
+            WriteLog($"Downloading release v{latestVer.Value.Major}.{latestVer.Value.Minor}.{latestVer.Value.Patch}");
+            ZipArchive? archive = await App.DownloadReleaseAsset(latestReleaseInfo);
+
+            if (archive is null)
+            {
+                throw new Exception("Could not download latest version.");
+            }
+
+            string pulsarDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData, Environment.SpecialFolderOption.Create), "Pulsar");
 
             double progressPerFile = 0.9 / archive.Entries.Count;
             int fileIndex = 1;
             foreach (var entry in archive.Entries)
             {
                 // Skip if directory
-                if (entry.FullName.EndsWith("/"))
+                if (entry.FullName.EndsWith('/'))
                     continue;
 
-                string filePath = Path.Combine(options.Bin64Path, entry.FullName);
+                string filePath = Path.Combine(pulsarDirectory, entry.FullName);
 
                 Directory.CreateDirectory(Path.GetDirectoryName(filePath)!);
 
@@ -99,10 +100,7 @@ public partial class InstallationPageViewModel(MainViewModel mainViewModel) : Pa
                 if (File.Exists(filePath))
                     WriteLog($" - {entry.FullName} already exists, overwriting.");
 
-                if (!SIMULATE_INSTALLATION)
-                {
-                    entry.ExtractToFile(filePath, true);
-                }
+                entry.ExtractToFile(filePath, true);
 
                 InstallProgress = fileIndex * progressPerFile;
                 fileIndex++;
@@ -111,9 +109,11 @@ public partial class InstallationPageViewModel(MainViewModel mainViewModel) : Pa
             }
 
             WriteLogNewline();
+            WriteLog("Creating updater");
+            File.Copy(Environment.ProcessPath!, Path.Combine(pulsarDirectory, "PulsarInstaller.exe"));
 
-            // update launcher.xml with the new version and file list
-            UpdateLauncherXml(options.Bin64Path, archive.Entries.Select(i => i.FullName).Where(i => i.StartsWith("Plugins")));
+            WriteLog("Updating checksum.txt");
+            App.UpdateLibrariesFolderChecksum(pulsarDirectory);
 
             WriteLogNewline();
 
@@ -131,10 +131,7 @@ public partial class InstallationPageViewModel(MainViewModel mainViewModel) : Pa
             if (steamClosed)
             {
                 WriteLog("Launching Steam.");
-                if (!SIMULATE_INSTALLATION)
-                {
-                    SteamHelpers.LaunchSteam();
-                }
+                SteamHelpers.LaunchSteam();
             }
 
             if (addNewline)
@@ -154,7 +151,7 @@ public partial class InstallationPageViewModel(MainViewModel mainViewModel) : Pa
 
     private void WriteEnvironmentInfo()
     {
-        WriteLog($"Installer Version: {App.Version}");
+        WriteLog($"Installer Version: {App.InstallerVersion}");
         WriteLog($"Environment.OSVersion: {Environment.OSVersion}");
         WriteLog($"Environment.Is64BitOperatingSystem: {Environment.Is64BitOperatingSystem}");
         WriteLog($"Environment.Is64BitProcess: {Environment.Is64BitProcess}");
@@ -208,14 +205,11 @@ public partial class InstallationPageViewModel(MainViewModel mainViewModel) : Pa
                     Value = launchOptionsStr,
                 };
 
-                if (!SIMULATE_INSTALLATION)
-                {
-                    // make backup
-                    File.Copy(userLocalConfigPath, userLocalConfigPath + $".backup_{DateTime.Now:yyMMdd_hhmmss}");
+                // make backup
+                File.Copy(userLocalConfigPath, userLocalConfigPath + $".backup_{DateTime.Now:yyMMdd_hhmmss}");
 
-                    // write modified file
-                    VdfSerializer.Serialize(userLocalConfig, userLocalConfigPath);
-                }
+                // write modified file
+                VdfSerializer.Serialize(userLocalConfig, userLocalConfigPath);
             }
         }
     }
@@ -236,24 +230,6 @@ public partial class InstallationPageViewModel(MainViewModel mainViewModel) : Pa
         }
 
         throw new NotImplementedException();
-    }
-
-    private void UpdateLauncherXml(string bin64Path, IEnumerable<string> files)
-    {
-        WriteLog("Updating launcher.xml");
-
-        var pulsarVersion = FileVersionInfo.GetVersionInfo(Path.Combine(bin64Path, "Plugins", "loader.dll"));
-        string pulsarVersionStr = $"v{pulsarVersion.FileMajorPart}.{pulsarVersion.FileMinorPart}.{pulsarVersion.FileBuildPart}";
-
-        string launcherXmlPath = Path.Combine(bin64Path, "Plugins", "launcher.xml");
-        var config = ConfigFile.Load(launcherXmlPath);
-        config.LoaderVersion = pulsarVersionStr;
-        config.Files = files.ToArray();
-
-        if (!SIMULATE_INSTALLATION)
-        {
-            config.Save();
-        }
     }
 
     private void RemovePluginLoaderFiles(string bin64Path)
@@ -284,10 +260,7 @@ public partial class InstallationPageViewModel(MainViewModel mainViewModel) : Pa
                 {
                     WriteLog($"Deleting {file}");
 
-                    if (!SIMULATE_INSTALLATION)
-                    {
-                        File.Delete(filePath);
-                    }
+                    File.Delete(filePath);
                 }
             }
 

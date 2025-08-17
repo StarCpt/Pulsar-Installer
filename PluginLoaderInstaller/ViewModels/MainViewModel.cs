@@ -15,7 +15,7 @@ public readonly record struct InstallOptions
 
 public partial class MainViewModel : ObservableObject
 {
-    public string AppTitle { get; } = $"{App.InstalledAppName} Installer v{App.Version}";
+    public string AppTitle { get; } = $"{App.InstalledAppName} Installer v{App.InstallerVersion}";
 
     [ObservableProperty]
     public partial PageViewModelBase Page { get; private set; }
