@@ -113,7 +113,7 @@ public partial class InstallationPageViewModel(MainViewModel mainViewModel) : Pa
             bool addNewline = options.AddLaunchOptions || options.SkipIntroFlag || steamClosed;
             if (options.AddLaunchOptions || options.SkipIntroFlag)
             {
-                AddLaunchOptions(options.AddLaunchOptions, options.SkipIntroFlag);
+                AddLaunchOptions(options.AddLaunchOptions, options.SkipIntroFlag, Path.Combine(pulsarDirectory, "Legacy.exe"));
             }
 
             if (steamClosed)
@@ -145,7 +145,7 @@ public partial class InstallationPageViewModel(MainViewModel mainViewModel) : Pa
         WriteLog($"Environment.Is64BitProcess: {Environment.Is64BitProcess}");
     }
 
-    private void AddLaunchOptions(bool addLaunchOptions, bool skipIntroFlag)
+    private void AddLaunchOptions(bool addLaunchOptions, bool skipIntroFlag, string pulsarExePath)
     {
         string launchOptionsStr = "";
         if (addLaunchOptions)
@@ -153,7 +153,7 @@ public partial class InstallationPageViewModel(MainViewModel mainViewModel) : Pa
             WriteLog($"Adding {App.InstalledAppName} to Space Engineers launch options.");
             if (launchOptionsStr.Length != 0)
                 launchOptionsStr += " ";
-            launchOptionsStr += "\\\"SpaceEngineersLauncher\\\" %command%";
+            launchOptionsStr += $"\\\"{pulsarExePath.Replace("\\", "\\\\")}\\\" %command%";
         }
 
         if (skipIntroFlag)
@@ -181,12 +181,6 @@ public partial class InstallationPageViewModel(MainViewModel mainViewModel) : Pa
 
             if (seProperties != null)
             {
-                // Check if launch options are already set
-                if (seProperties.TryGetValue("LaunchOptions") is VdfKeyValue kv &&
-                    (!addLaunchOptions || kv.Value.Contains("\\\"SpaceEngineersLauncher\\\" %command%")) &&
-                    (!skipIntroFlag || kv.Value.Contains("-skipintro")))
-                    continue;
-
                 seProperties["LaunchOptions"] = new VdfKeyValue
                 {
                     Key = "LaunchOptions",
