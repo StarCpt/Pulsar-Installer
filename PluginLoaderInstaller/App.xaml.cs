@@ -91,11 +91,6 @@ public partial class App : Application
         archive.ExtractToDirectory(pulsarDirectory, true);
     }
 
-    public static void SavePulsarVersion(string pulsarDirectory, SemanticVersion version)
-    {
-        File.WriteAllText(Path.Combine(pulsarDirectory, VERSION_FILE_NAME), $"v{version.Major}.{version.Minor}.{version.Patch}");
-    }
-
     private static SemanticVersion ParseVersionString(string versionStr)
     {
         string[] versionStrArr = versionStr.Split('.');

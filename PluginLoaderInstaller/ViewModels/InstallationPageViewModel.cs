@@ -109,10 +109,6 @@ public partial class InstallationPageViewModel(MainViewModel mainViewModel) : Pa
             }
 
             WriteLogNewline();
-            WriteLog("Creating updater");
-            File.Copy(Environment.ProcessPath!, Path.Combine(pulsarDirectory, "PulsarInstaller.exe"));
-
-            WriteLogNewline();
 
             bool addNewline = options.AddLaunchOptions || options.SkipIntroFlag || steamClosed;
             if (options.AddLaunchOptions || options.SkipIntroFlag)
