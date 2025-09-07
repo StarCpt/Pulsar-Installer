@@ -1,9 +1,4 @@
-﻿using Newtonsoft.Json;
-using PulsarInstaller.GitHub;
-using PulsarInstaller.ViewModels;
-using System.IO;
-using System.IO.Compression;
-using System.Net.Http;
+﻿using PulsarInstaller.ViewModels;
 using System.Windows;
 
 namespace PulsarInstaller;
@@ -16,9 +11,6 @@ public partial class App : Application
     public static string InstalledAppName { get; } = "Pulsar";
     public static string InstallerVersion { get; } = "2.0";
 
-    const string VERSION_FILE_NAME = "version.txt";
-    const string LATEST_RELEASE_URL = "https://api.github.com/repos/SpaceGT/Pulsar/releases/latest";
-
     protected override void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
@@ -29,80 +21,6 @@ public partial class App : Application
         };
 
         MainWindow.Show();
-    }
-
-    public static SemanticVersion? TryGetInstalledVersion(string pulsarDirectory)
-    {
-        string versionFilePath = Path.Combine(pulsarDirectory, VERSION_FILE_NAME);
-        if (!File.Exists(versionFilePath))
-            return null;
-
-        // read current version from pulsarversion.txt file
-        string currentVersionStr = File.ReadAllText(versionFilePath).Trim();
-        return ParseVersionString(currentVersionStr);
-    }
-
-    public static async Task<(SemanticVersion? version, Release latestReleaseInfo)> TryGetLatestVersion()
-    {
-        try
-        {
-            // check latest github release version
-
-            using var webClient = new HttpClient();
-            webClient.DefaultRequestHeaders.UserAgent.TryParseAdd("request"); // required for github API
-
-            // get api response json
-            using var response = await webClient.GetStreamAsync(LATEST_RELEASE_URL);
-
-            // deserialize json
-            using var responseReader = new StreamReader(response);
-            using var responseJsonReader = new JsonTextReader(responseReader);
-            Release latestReleaseInfo = JsonSerializer.CreateDefault().Deserialize<Release>(responseJsonReader)!;
-
-            // parse version from release name
-            // the name of the release should be in SemVer format (v1.2.3)
-            return (ParseVersionString(latestReleaseInfo.Name[1..]), latestReleaseInfo);
-        }
-        catch
-        {
-            return default; // assume latest if can't get latest release version
-        }
-    }
-
-    public static async Task<ZipArchive?> DownloadReleaseAsset(Release releaseInfo)
-    {
-        // find first valid zip asset
-        string assetEndsWithStr = releaseInfo.Name + ".zip"; // v1.2.3.zip
-        var assetToDownload = releaseInfo.Assets.FirstOrDefault(i => i.Name.EndsWith(assetEndsWithStr, StringComparison.OrdinalIgnoreCase));
-
-        if (assetToDownload is null)
-            return null;
-
-        using var client = new HttpClient();
-        client.DefaultRequestHeaders.UserAgent.TryParseAdd("request"); // required for github API
-
-        // download zip
-        var response = await client.GetStreamAsync(assetToDownload.BrowserDownloadUrl);
-        return new ZipArchive(response);
-    }
-
-    public static void UnpackArchive(string pulsarDirectory, ZipArchive archive)
-    {
-        archive.ExtractToDirectory(pulsarDirectory, true);
-    }
-
-    private static SemanticVersion ParseVersionString(string versionStr)
-    {
-        string[] versionStrArr = versionStr.Split('.');
-        int majorVersion = versionStrArr.Length >= 1 && int.TryParse(versionStrArr[0], out int major) ? major : 0;
-        int minorVersion = versionStrArr.Length >= 2 && int.TryParse(versionStrArr[1], out int minor) ? minor : 0;
-        int patchVersion = versionStrArr.Length >= 3 && int.TryParse(versionStrArr[2], out int patch) ? patch : 0;
-        return new SemanticVersion(majorVersion, minorVersion, patchVersion);
-    }
-
-    public static void ShowError(string str)
-    {
-        // TODO: show some dialog
     }
 }
 

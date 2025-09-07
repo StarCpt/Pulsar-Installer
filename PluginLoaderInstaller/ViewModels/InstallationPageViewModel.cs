@@ -38,7 +38,7 @@ public partial class InstallationPageViewModel(MainViewModel mainViewModel) : Pa
         WriteLog("Fetching version info.");
 
         // get latest version info
-        var (latestVer, latestReleaseInfo) = await App.TryGetLatestVersion();
+        var (latestVer, latestReleaseInfo) = await InstallHelpers.TryGetLatestVersion();
         if (!latestVer.HasValue)
         {
             throw new Exception("Could not fetch latest version.");
@@ -74,7 +74,7 @@ public partial class InstallationPageViewModel(MainViewModel mainViewModel) : Pa
 
             // download latest release asset zip
             WriteLog($"Downloading release v{latestVer.Value.Major}.{latestVer.Value.Minor}.{latestVer.Value.Patch}");
-            ZipArchive? archive = await App.DownloadReleaseAsset(latestReleaseInfo);
+            ZipArchive? archive = await InstallHelpers.DownloadReleaseAsset(latestReleaseInfo);
 
             if (archive is null)
             {

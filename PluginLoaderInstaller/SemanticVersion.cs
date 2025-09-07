@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.Text.RegularExpressions;
 
 namespace PulsarInstaller;
 
@@ -44,5 +45,17 @@ public struct SemanticVersion(int major, int minor, int patch)
     {
         return HashCode.Combine(Major, Minor, Patch);
     }
+
+    public static SemanticVersion Parse(string str)
+    {
+        str = Regex.Replace(str, "[A-Za-z]", ""); // remove any alphabet characters like "v" from "v1.2.3"
+        string[] versionStrArr = str.Split('.');
+        int majorVersion = versionStrArr.Length >= 1 && int.TryParse(versionStrArr[0], out int major) ? major : 0;
+        int minorVersion = versionStrArr.Length >= 2 && int.TryParse(versionStrArr[1], out int minor) ? minor : 0;
+        int patchVersion = versionStrArr.Length >= 3 && int.TryParse(versionStrArr[2], out int patch) ? patch : 0;
+        return new SemanticVersion(majorVersion, minorVersion, patchVersion);
+    }
+
+    public override readonly string ToString() => $"{Major}.{Minor}.{Patch}";
 }
 
