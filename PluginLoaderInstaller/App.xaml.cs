@@ -17,7 +17,6 @@ public partial class App : Application
     public static string InstalledAppName { get; } = "Pulsar";
     public static string InstallerVersion { get; } = "2.0";
 
-    const bool TEST_SILENT_UPGRADE = false;
     const string VERSION_FILE_NAME = "version.txt";
     const string LATEST_RELEASE_URL = "https://api.github.com/repos/SpaceGT/Pulsar/releases/latest";
 
@@ -25,71 +24,12 @@ public partial class App : Application
     {
         base.OnStartup(e);
 
-        if (TEST_SILENT_UPGRADE || Environment.GetCommandLineArgs().Contains("-silent-upgrade"))
-        {
-            Task.Run(DoSilentUpgrade).Wait();
-            this.Shutdown();
-            return;
-        }
-
         MainWindow = new MainWindow
         {
             DataContext = new MainViewModel(),
         };
 
         MainWindow.Show();
-    }
-
-    private static async Task DoSilentUpgrade()
-    {
-        try
-        {
-            // check for new Pulsar release, download, and unpack new files without user interaction
-            // the installer exe is in the same directory as the launcher
-
-            string pulsarDir = Path.GetDirectoryName(Environment.ProcessPath)!;
-
-            if (TEST_SILENT_UPGRADE)
-                pulsarDir = Path.Combine(pulsarDir, "upgrade_test");
-
-            var installedVer = TryGetInstalledVersion(pulsarDir) ?? new SemanticVersion(0, 0, 0);
-            var (latestVer, latestReleaseInfo) = await TryGetLatestVersion();
-
-            if (latestVer.HasValue)
-            {
-                bool needsUpgrade = latestVer.Value > installedVer;
-                if (!needsUpgrade)
-                {
-                    // up to date
-                    return;
-                }
-            }
-            else // if (!latestVer.HasValue)
-            {
-                // assume latest if can't get latest release version
-                // supersedes missing installedVer
-                ShowError("Update Failed: Could not fetch latest version info.");
-                return;
-            }
-
-            ZipArchive? latestReleaseAssetZip = await DownloadReleaseAsset(latestReleaseInfo!);
-
-            if (latestReleaseAssetZip is null)
-            {
-                ShowError("Update Failed: Could not download latest version.");
-                return;
-            }
-
-            UnpackArchive(pulsarDir, latestReleaseAssetZip);
-            SavePulsarVersion(pulsarDir, latestVer.Value);
-            UpdateLibrariesFolderChecksum(pulsarDir);
-
-            ShowError("Pulsar Updated!");
-        }
-        catch (Exception e)
-        {
-            ShowError("Update Failed: " + e);
-        }
     }
 
     public static SemanticVersion? TryGetInstalledVersion(string pulsarDirectory)
