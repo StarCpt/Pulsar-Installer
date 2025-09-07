@@ -28,8 +28,8 @@ public static class InstallHelpers
             Release latestReleaseInfo = JsonSerializer.CreateDefault().Deserialize<Release>(responseJsonReader)!;
 
             // parse version from release name
-            // the name of the release should be in SemVer format (v1.2.3)
-            return (SemanticVersion.Parse(latestReleaseInfo.Name[1..]), latestReleaseInfo);
+            // the name of the release (not release tag) should be in this format: Pulsar-v1.2.3
+            return (SemanticVersion.Parse(latestReleaseInfo.Name.Replace("Pulsar-", "")), latestReleaseInfo);
         }
         catch
         {
@@ -40,7 +40,7 @@ public static class InstallHelpers
     public static async Task<ZipArchive?> DownloadReleaseAsset(Release releaseInfo)
     {
         // find first valid zip asset
-        string assetEndsWithStr = releaseInfo.Name + ".zip"; // v1.2.3.zip
+        string assetEndsWithStr = releaseInfo.Name + ".zip"; // Pulsar-v1.2.3.zip
         var assetToDownload = releaseInfo.Assets.FirstOrDefault(i => i.Name.EndsWith(assetEndsWithStr, StringComparison.OrdinalIgnoreCase));
 
         if (assetToDownload is null)
