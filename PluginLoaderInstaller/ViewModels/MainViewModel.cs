@@ -8,7 +8,6 @@ public readonly record struct InstallOptions
 {
     public required string Bin64Path { get; init; }
     public required bool AddLaunchOptions { get; init; }
-    public required bool AddAsNonSteamGame { get; init; }
     public required bool SkipIntroFlag { get; init; }
     public required bool RemovePluginLoader { get; init; }
 }
@@ -42,7 +41,6 @@ public partial class MainViewModel : ObservableObject
         {
             Bin64Path = optionsPageVm.Bin64Path,
             AddLaunchOptions = optionsPageVm.AddLaunchOptions,
-            AddAsNonSteamGame = optionsPageVm.AddAsNonSteamGame,
             SkipIntroFlag = optionsPageVm.SkipIntroFlag,
             RemovePluginLoader = optionsPageVm.RemovePluginLoader,
         };

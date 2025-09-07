@@ -54,7 +54,7 @@ public partial class InstallationPageViewModel(MainViewModel mainViewModel) : Pa
         {
             InstallOptions options = MainViewModel.GetInstallOptions();
 
-            bool needToCloseSteam = options.AddLaunchOptions || options.AddAsNonSteamGame || options.SkipIntroFlag;
+            bool needToCloseSteam = options.AddLaunchOptions || options.SkipIntroFlag;
             bool steamClosed = false;
             if (needToCloseSteam && SteamHelpers.IsSteamRunning())
             {
@@ -117,15 +117,10 @@ public partial class InstallationPageViewModel(MainViewModel mainViewModel) : Pa
 
             WriteLogNewline();
 
-            bool addNewline = options.AddLaunchOptions || options.AddAsNonSteamGame || options.SkipIntroFlag || steamClosed;
+            bool addNewline = options.AddLaunchOptions || options.SkipIntroFlag || steamClosed;
             if (options.AddLaunchOptions || options.SkipIntroFlag)
             {
                 AddLaunchOptions(options.AddLaunchOptions, options.SkipIntroFlag);
-            }
-
-            if (options.AddAsNonSteamGame)
-            {
-                //AddAsNonSteamGame();
             }
 
             if (steamClosed)
@@ -212,24 +207,6 @@ public partial class InstallationPageViewModel(MainViewModel mainViewModel) : Pa
                 VdfSerializer.Serialize(userLocalConfig, userLocalConfigPath);
             }
         }
-    }
-
-    private void AddAsNonSteamGame()
-    {
-        WriteLog($"Adding {App.InstalledAppName} as non-steam game.");
-
-        // read shortcuts.vdf
-        string userDataDir = Path.Combine(SteamHelpers.TryGetSteamPath()!, "userdata");
-        foreach (var shortcutConfigPath in Directory.GetDirectories(userDataDir, "*").Select(i => Path.Combine(i, "config", "shortcuts.vdf")))
-        {
-            if (!File.Exists(shortcutConfigPath))
-                continue;
-
-            var shortcutConfig = VdfSerializer.Deserialize(shortcutConfigPath);
-
-        }
-
-        throw new NotImplementedException();
     }
 
     private void RemovePluginLoaderFiles(string bin64Path)

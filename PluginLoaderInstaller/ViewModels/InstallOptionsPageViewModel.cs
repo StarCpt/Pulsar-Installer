@@ -25,8 +25,6 @@ public partial class InstallOptionsPageViewModel(MainViewModel mainViewModel) : 
     [ObservableProperty]
     public partial bool AddLaunchOptions { get; set; } = false;
     [ObservableProperty]
-    public partial bool AddAsNonSteamGame { get; set; } = false;
-    [ObservableProperty]
     public partial bool SkipIntroFlag { get; set; } = false;
     [ObservableProperty]
     public partial bool RemovePluginLoader { get; set; } = true;
