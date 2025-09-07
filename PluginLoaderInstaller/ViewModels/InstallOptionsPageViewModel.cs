@@ -4,7 +4,7 @@ using Gameloop.Vdf;
 using Gameloop.Vdf.JsonConverter;
 using Gameloop.Vdf.Linq;
 using Microsoft.Win32;
-using PulsarInstaller.Models.Vdf;
+using PulsarInstaller.Vdf;
 using System.IO;
 
 namespace PulsarInstaller.ViewModels;
