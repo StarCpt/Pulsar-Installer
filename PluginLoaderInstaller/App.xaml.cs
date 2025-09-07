@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using Pulsar.Shared;
 using PulsarInstaller.GitHub;
 using PulsarInstaller.ViewModels;
 using System.IO;

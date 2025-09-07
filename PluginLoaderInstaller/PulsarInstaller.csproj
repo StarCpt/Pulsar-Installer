@@ -27,7 +27,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Pulsar\Shared\Shared.csproj" />
     <ProjectReference Include="..\VdfSharp\VdfSharp.csproj" />
   </ItemGroup>
 
