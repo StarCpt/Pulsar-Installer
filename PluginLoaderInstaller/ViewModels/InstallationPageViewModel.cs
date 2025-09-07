@@ -112,9 +112,6 @@ public partial class InstallationPageViewModel(MainViewModel mainViewModel) : Pa
             WriteLog("Creating updater");
             File.Copy(Environment.ProcessPath!, Path.Combine(pulsarDirectory, "PulsarInstaller.exe"));
 
-            WriteLog("Updating checksum.txt");
-            App.UpdateLibrariesFolderChecksum(pulsarDirectory);
-
             WriteLogNewline();
 
             bool addNewline = options.AddLaunchOptions || options.SkipIntroFlag || steamClosed;

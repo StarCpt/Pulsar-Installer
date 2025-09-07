@@ -106,15 +106,6 @@ public partial class App : Application
         return new SemanticVersion(majorVersion, minorVersion, patchVersion);
     }
 
-    public static void UpdateLibrariesFolderChecksum(string pulsarDirectory)
-    {
-        string librariesDir = Path.Combine(pulsarDirectory, "Libraries");
-        if (!Directory.Exists(librariesDir))
-            return;
-        string hash = Tools.GetFolderHash(librariesDir);
-        File.WriteAllText(Path.Combine(pulsarDirectory, "checksum.txt"), hash);
-    }
-
     public static void ShowError(string str)
     {
         // TODO: show some dialog
