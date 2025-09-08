@@ -4,7 +4,7 @@ using Gameloop.Vdf;
 using Gameloop.Vdf.JsonConverter;
 using Gameloop.Vdf.Linq;
 using Microsoft.Win32;
-using PulsarInstaller.Models.Vdf;
+using PulsarInstaller.Vdf;
 using System.IO;
 
 namespace PulsarInstaller.ViewModels;
@@ -24,8 +24,6 @@ public partial class InstallOptionsPageViewModel(MainViewModel mainViewModel) : 
 
     [ObservableProperty]
     public partial bool AddLaunchOptions { get; set; } = false;
-    [ObservableProperty]
-    public partial bool AddAsNonSteamGame { get; set; } = false;
     [ObservableProperty]
     public partial bool SkipIntroFlag { get; set; } = false;
     [ObservableProperty]

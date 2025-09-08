@@ -9,8 +9,7 @@ namespace PulsarInstaller;
 public partial class App : Application
 {
     public static string InstalledAppName { get; } = "Pulsar";
-    public static string InstalledAppVersion { get; } = "1.13.0";
-    public static string Version { get; } = "1.0";
+    public static string InstallerVersion { get; } = "2.0";
 
     protected override void OnStartup(StartupEventArgs e)
     {
