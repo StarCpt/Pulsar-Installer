@@ -35,23 +35,23 @@ public partial class InstallationPageViewModel(MainViewModel mainViewModel) : Pa
         InstallProgress = 0;
         WriteLog($"Installing {App.InstalledAppName}.");
 
-        WriteLog("Fetching version info.");
-
-        // get latest version info
-        var (latestVer, latestReleaseInfo) = await InstallHelpers.TryGetLatestVersion();
-        if (!latestVer.HasValue)
-        {
-            throw new Exception("Could not fetch latest version.");
-        }
-
-        WriteLog($"Latest Version: v{latestVer.Value.Major}.{latestVer.Value.Minor}.{latestVer.Value.Patch}");
-
-        WriteLogNewline();
-        WriteEnvironmentInfo();
-        WriteLogNewline();
-
         try
         {
+            WriteLog("Fetching version info.");
+
+            // get latest version info
+            var (latestVer, latestReleaseInfo) = await InstallHelpers.TryGetLatestVersion();
+            if (!latestVer.HasValue)
+            {
+                throw new Exception("Could not fetch latest version.");
+            }
+
+            WriteLog($"Latest Version: v{latestVer.Value.Major}.{latestVer.Value.Minor}.{latestVer.Value.Patch}");
+
+            WriteLogNewline();
+            WriteEnvironmentInfo();
+            WriteLogNewline();
+
             InstallOptions options = MainViewModel.GetInstallOptions();
 
             bool needToCloseSteam = options.AddLaunchOptions || options.SkipIntroFlag;
