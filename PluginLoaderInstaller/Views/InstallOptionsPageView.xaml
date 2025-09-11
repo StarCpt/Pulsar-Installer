@@ -36,9 +36,5 @@
         <CheckBox IsChecked="{Binding AddLaunchOptions}" Margin="0,8,0,0">
             <TextBlock Text="{Binding Path=(base:App.InstalledAppName), Mode=OneWay, StringFormat={}Add to SE launch options. This will make starting SE automatically run {0}. (Steam will restart.)}" />
         </CheckBox>
-        <!--SkipIntro Launch Option-->
-        <CheckBox IsChecked="{Binding SkipIntroFlag}" Margin="0,8,0,0">
-            <TextBlock Text="Add -skipintro flag to SE launch options (Steam will restart)" />
-        </CheckBox>
     </StackPanel>
 </UserControl>

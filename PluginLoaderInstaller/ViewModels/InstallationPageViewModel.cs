@@ -54,7 +54,7 @@ public partial class InstallationPageViewModel(MainViewModel mainViewModel) : Pa
 
             InstallOptions options = MainViewModel.GetInstallOptions();
 
-            bool needToCloseSteam = options.AddLaunchOptions || options.SkipIntroFlag;
+            bool needToCloseSteam = options.AddLaunchOptions;
             bool steamClosed = false;
             if (needToCloseSteam && SteamHelpers.IsSteamRunning())
             {
@@ -110,10 +110,10 @@ public partial class InstallationPageViewModel(MainViewModel mainViewModel) : Pa
 
             WriteLogNewline();
 
-            bool addNewline = options.AddLaunchOptions || options.SkipIntroFlag || steamClosed;
-            if (options.AddLaunchOptions || options.SkipIntroFlag)
+            bool addNewline = options.AddLaunchOptions || steamClosed;
+            if (options.AddLaunchOptions)
             {
-                AddLaunchOptions(options.AddLaunchOptions, options.SkipIntroFlag, Path.Combine(pulsarDirectory, "Legacy.exe"));
+                AddLaunchOptions(Path.Combine(pulsarDirectory, "Legacy.exe"));
             }
 
             if (steamClosed)
@@ -145,24 +145,11 @@ public partial class InstallationPageViewModel(MainViewModel mainViewModel) : Pa
         WriteLog($"Environment.Is64BitProcess: {Environment.Is64BitProcess}");
     }
 
-    private void AddLaunchOptions(bool addLaunchOptions, bool skipIntroFlag, string pulsarExePath)
+    private void AddLaunchOptions(string pulsarExePath)
     {
-        string launchOptionsStr = "";
-        if (addLaunchOptions)
-        {
-            WriteLog($"Adding {App.InstalledAppName} to Space Engineers launch options.");
-            if (launchOptionsStr.Length != 0)
-                launchOptionsStr += " ";
-            launchOptionsStr += $"\\\"{pulsarExePath.Replace("\\", "\\\\")}\\\" %command%";
-        }
+        WriteLog($"Adding {App.InstalledAppName} to Space Engineers launch options.");
 
-        if (skipIntroFlag)
-        {
-            WriteLog($"Adding -skipintro to Space Engineers launch options.");
-            if (launchOptionsStr.Length != 0)
-                launchOptionsStr += " ";
-            launchOptionsStr += "-skipintro";
-        }
+        string launchOptionsStr = $"\\\"{pulsarExePath.Replace("\\", "\\\\")}\\\" %command%";
 
         // read localconfigs.vdf
         string userDataDir = Path.Combine(SteamHelpers.TryGetSteamPath()!, "userdata");
@@ -181,6 +168,10 @@ public partial class InstallationPageViewModel(MainViewModel mainViewModel) : Pa
 
             if (seProperties != null)
             {
+                // Check if launch options are already set
+                if (seProperties.TryGetValue("LaunchOptions") is VdfKeyValue kv && kv.Value.Contains(launchOptionsStr))
+                    continue;
+
                 seProperties["LaunchOptions"] = new VdfKeyValue
                 {
                     Key = "LaunchOptions",
