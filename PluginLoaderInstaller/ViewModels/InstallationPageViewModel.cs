@@ -67,9 +67,17 @@ public partial class InstallationPageViewModel(MainViewModel mainViewModel) : Pa
                 WriteLogNewline();
             }
 
+            string? bin64Path = App.TryFindBin64Path();
             if (options.RemovePluginLoader)
             {
-                RemovePluginLoaderFiles(options.Bin64Path);
+                if (!string.IsNullOrWhiteSpace(bin64Path))
+                {
+                    RemovePluginLoaderFiles(bin64Path);
+                }
+                else
+                {
+                    WriteLog("Bin64 directory could not be located, skipping PluginLoader uninstallation.");
+                }
             }
 
             // download latest release asset zip
@@ -81,7 +89,7 @@ public partial class InstallationPageViewModel(MainViewModel mainViewModel) : Pa
                 throw new Exception("Could not download latest version.");
             }
 
-            string pulsarDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData, Environment.SpecialFolderOption.Create), "Pulsar");
+            string pulsarDirectory = options.InstallPath;
 
             double progressPerFile = 0.9 / archive.Entries.Count;
             int fileIndex = 1;

@@ -6,7 +6,7 @@ namespace PulsarInstaller.ViewModels;
 
 public readonly record struct InstallOptions
 {
-    public required string Bin64Path { get; init; }
+    public required string InstallPath { get; init; }
     public required bool AddLaunchOptions { get; init; }
     public required bool RemovePluginLoader { get; init; }
 }
@@ -38,7 +38,7 @@ public partial class MainViewModel : ObservableObject
         var optionsPageVm = _pages.OfType<InstallOptionsPageViewModel>().Single();
         return new InstallOptions
         {
-            Bin64Path = optionsPageVm.Bin64Path,
+            InstallPath = optionsPageVm.InstallPath,
             AddLaunchOptions = optionsPageVm.AddLaunchOptions,
             RemovePluginLoader = optionsPageVm.RemovePluginLoader,
         };
