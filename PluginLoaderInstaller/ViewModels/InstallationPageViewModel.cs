@@ -159,39 +159,46 @@ public partial class InstallationPageViewModel(MainViewModel mainViewModel) : Pa
 
         string launchOptionsStr = $"\\\"{pulsarExePath.Replace("\\", "\\\\")}\\\" %command%";
 
-        // read localconfigs.vdf
-        string userDataDir = Path.Combine(SteamHelpers.TryGetSteamPath()!, "userdata");
-        foreach (var userLocalConfigPath in Directory.GetDirectories(userDataDir, "*").Select(i => Path.Combine(i, "config", "localconfig.vdf")))
+        try
         {
-            if (!File.Exists(userLocalConfigPath))
-                continue;
-
-            var userLocalConfig = VdfSerializer.Deserialize(userLocalConfigPath);
-            var seProperties = userLocalConfig
-                .TryGetValue<VdfProperty>("Software", StringComparison.OrdinalIgnoreCase)?
-                .TryGetValue<VdfProperty>("Valve", StringComparison.OrdinalIgnoreCase)?
-                .TryGetValue<VdfProperty>("Steam", StringComparison.OrdinalIgnoreCase)?
-                .TryGetValue<VdfProperty>("apps", StringComparison.OrdinalIgnoreCase)?
-                .TryGetValue<VdfProperty>("244850");
-
-            if (seProperties != null)
+            // read localconfigs.vdf
+            string userDataDir = Path.Combine(SteamHelpers.TryGetSteamPath()!, "userdata");
+            foreach (var userLocalConfigPath in Directory.GetDirectories(userDataDir, "*").Select(i => Path.Combine(i, "config", "localconfig.vdf")))
             {
-                // Check if launch options are already set
-                if (seProperties.TryGetValue("LaunchOptions") is VdfKeyValue kv && kv.Value.Contains(launchOptionsStr))
+                if (!File.Exists(userLocalConfigPath))
                     continue;
 
-                seProperties["LaunchOptions"] = new VdfKeyValue
+                var userLocalConfig = VdfSerializer.Deserialize(userLocalConfigPath);
+                var seProperties = userLocalConfig
+                    .TryGetValue<VdfProperty>("Software", StringComparison.OrdinalIgnoreCase)?
+                    .TryGetValue<VdfProperty>("Valve", StringComparison.OrdinalIgnoreCase)?
+                    .TryGetValue<VdfProperty>("Steam", StringComparison.OrdinalIgnoreCase)?
+                    .TryGetValue<VdfProperty>("apps", StringComparison.OrdinalIgnoreCase)?
+                    .TryGetValue<VdfProperty>("244850");
+
+                if (seProperties != null)
                 {
-                    Key = "LaunchOptions",
-                    Value = launchOptionsStr,
-                };
+                    // Check if launch options are already set
+                    if (seProperties.TryGetValue("LaunchOptions") is VdfKeyValue kv && kv.Value.Contains(launchOptionsStr))
+                        continue;
 
-                // make backup
-                File.Copy(userLocalConfigPath, userLocalConfigPath + $".backup_{DateTime.Now:yyMMdd_hhmmss}");
+                    seProperties["LaunchOptions"] = new VdfKeyValue
+                    {
+                        Key = "LaunchOptions",
+                        Value = launchOptionsStr,
+                    };
 
-                // write modified file
-                VdfSerializer.Serialize(userLocalConfig, userLocalConfigPath);
+                    // make backup
+                    File.Copy(userLocalConfigPath, userLocalConfigPath + $".backup_{DateTime.Now:yyMMdd_hhmmss}");
+
+                    // write modified file
+                    VdfSerializer.Serialize(userLocalConfig, userLocalConfigPath);
+                }
             }
+        }
+        catch (Exception e)
+        {
+            WriteLog($"An error occurred while adding launch options to SE, skipping. Error: {e}");
         }
     }
 
