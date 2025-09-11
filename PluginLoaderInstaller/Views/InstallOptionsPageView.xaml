@@ -18,7 +18,7 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
-            <TextBox Grid.Column="0" Padding="0,1,0,2" Text="{Binding InstallPath, UpdateSourceTrigger=PropertyChanged}" />
+            <TextBox Grid.Column="0" Padding="0,1,0,2" Text="{Binding InstallPath, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="True" />
             <!--<Button Grid.Column="1" Margin="11,0,0,0" Content="Browse..." Width="73" Command="{Binding BrowseFoldersCommand}" />-->
         </Grid>
 
