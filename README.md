@@ -3,4 +3,4 @@ Pulsar-Installer is a convenient installation wizard for [Pulsar](https://github
 
 To use the installer, simply download and run the installer executable from [releases](https://github.com/StarCpt/Pulsar-Installer/releases).
 #
-![Screenshot_25-06-09_011156](https://github.com/user-attachments/assets/5262acc6-3f80-49be-b95e-205a89defb32)
+<img width="686" height="493" alt="Screenshot_25-09-11_234115" src="https://github.com/user-attachments/assets/2e4114bd-7925-4eac-8c6a-88ccf1c62b3e" />
