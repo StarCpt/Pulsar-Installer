@@ -4,6 +4,7 @@ using Gameloop.Vdf.Linq;
 using PulsarInstaller.Vdf;
 using PulsarInstaller.ViewModels;
 using System.IO;
+using System.Reflection;
 using System.Windows;
 
 namespace PulsarInstaller;
@@ -14,7 +15,7 @@ namespace PulsarInstaller;
 public partial class App : Application
 {
     public static string InstalledAppName { get; } = "Pulsar";
-    public static string InstallerVersion { get; } = "2.0.3";
+    public static string InstallerVersion { get; } = Assembly.GetExecutingAssembly().GetName().Version?.ToString(3) ?? "Unknown Version";
 
     protected override void OnStartup(StartupEventArgs e)
     {

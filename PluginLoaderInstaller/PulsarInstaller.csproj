@@ -10,6 +10,9 @@
     <IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
     <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
     <ApplicationIcon>pulsar.ico</ApplicationIcon>
+    <AssemblyVersion>2.0.3.0</AssemblyVersion>
+    <AssemblyFileVersion>$(AssemblyVersion)</AssemblyFileVersion>
+    <AssemblyName>$(MSBuildProjectName)-$(AssemblyVersion.Substring(0, $(AssemblyVersion.LastIndexOf('.'))))</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
