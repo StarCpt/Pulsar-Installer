@@ -4,13 +4,6 @@ using System.Linq;
 
 namespace PulsarInstaller.ViewModels;
 
-public readonly record struct InstallOptions
-{
-    public required string InstallPath { get; init; }
-    public required bool AddLaunchOptions { get; init; }
-    public required bool RemovePluginLoader { get; init; }
-}
-
 public partial class MainViewModel : ObservableObject
 {
     public string AppTitle { get; } = $"{App.InstalledAppName} Installer v{App.InstallerVersion}";
@@ -35,13 +28,7 @@ public partial class MainViewModel : ObservableObject
 
     public InstallOptions GetInstallOptions()
     {
-        var optionsPageVm = _pages.OfType<InstallOptionsPageViewModel>().Single();
-        return new InstallOptions
-        {
-            InstallPath = optionsPageVm.InstallPath,
-            AddLaunchOptions = optionsPageVm.AddLaunchOptions,
-            RemovePluginLoader = optionsPageVm.RemovePluginLoader,
-        };
+        return _pages.OfType<InstallOptionsPageViewModel>().Single().InstallOptions;
     }
 
     [RelayCommand]

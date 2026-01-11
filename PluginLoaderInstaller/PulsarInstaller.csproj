@@ -12,10 +12,6 @@
     <ApplicationIcon>pulsar.ico</ApplicationIcon>
   </PropertyGroup>
 
-  <!--<ItemGroup>
-    <EmbeddedResource Include="Assets\pluginloader.zip" />
-  </ItemGroup>-->
-
   <ItemGroup>
     <Content Include="pulsar.ico" />
   </ItemGroup>

@@ -18,20 +18,29 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
-            <TextBox Grid.Column="0" Padding="0,1,0,2" Text="{Binding InstallPath, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="True" />
+            <TextBox Grid.Column="0" Padding="0,1,0,2" Text="{Binding InstallPath, Mode=OneWay}" IsReadOnly="True" />
+            <!--<TextBox Grid.Column="0" Padding="0,1,0,2" Text="{Binding InstallPath, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="True" />-->
             <!--<Button Grid.Column="1" Margin="11,0,0,0" Content="Browse..." Width="73" Command="{Binding BrowseFoldersCommand}" />-->
         </Grid>
+        
+        <TextBlock Text="Select the Pulsar version to install" Margin="0,16,0,0" />
+        <CheckBox IsChecked="{Binding InstallNetFramework}" Margin="0,8,0,0">
+            .NET Framework 4.8
+        </CheckBox>
+        <CheckBox IsChecked="{Binding InstallNetCore}" Margin="0,8,0,0">
+            .NET 10 (Experimental, improves game performance but may be less stable)
+        </CheckBox>
 
-        <TextBlock Text="Additional Settings" Margin="0,24,0,0" />
-
-        <CheckBox Content="Install Pulsar" IsChecked="True" IsEnabled="False" Margin="0,8,0,0" />
-
-        <!--Remove PL Files-->
-        <!--<CheckBox Content="Remove existing Plugin Loader files" IsChecked="{Binding RemovePluginLoader}" Margin="0,8,0,0" IsEnabled="False" />-->
-
+        <TextBlock Text="Additional settings" Margin="0,16,0,0" />
+        
         <!--Add To SE Launch Options-->
         <CheckBox IsChecked="{Binding AddLaunchOptions}" Margin="0,8,0,0">
-            <TextBlock Text="{Binding Path=(base:App.InstalledAppName), Mode=OneWay, StringFormat={}Add to SE launch options. This will make starting SE automatically run {0}. (Steam will restart.)}" />
+            Add to SE launch options. This will make starting SE in Steam automatically run Pulsar. (Steam will restart)
+        </CheckBox>
+
+        <!--Desktop Shortcut-->
+        <CheckBox IsChecked="{Binding CreateDesktopShortcut}" Margin="0,8,0,0">
+            Create desktop shortcut
         </CheckBox>
     </StackPanel>
 </UserControl>

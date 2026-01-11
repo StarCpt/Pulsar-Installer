@@ -1,10 +1,13 @@
-﻿using VdfSharp;
-using VdfSharp.Data;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using PulsarInstaller.Com;
+using PulsarInstaller.Models;
 using System.IO;
 using System.IO.Compression;
+using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using System.Windows.Media;
+using VdfSharp;
+using VdfSharp.Data;
 
 namespace PulsarInstaller.ViewModels;
 
@@ -118,10 +121,17 @@ public partial class InstallationPageViewModel(MainViewModel mainViewModel) : Pa
 
             WriteLogNewline();
 
-            bool addNewline = options.AddLaunchOptions || steamClosed;
+            string pulsarExePath = Path.Combine(pulsarDirectory, options.VersionToInstall is PulsarVersion.NetFramework ? "Legacy.exe" : "Interim.exe");
+
+            bool addNewline = options.AddLaunchOptions || options.CreateDesktopShortcut || steamClosed;
             if (options.AddLaunchOptions)
             {
-                AddLaunchOptions(Path.Combine(pulsarDirectory, "Legacy.exe"));
+                AddLaunchOptions(pulsarExePath);
+            }
+
+            if (options.CreateDesktopShortcut)
+            {
+                CreateDesktopShortcut(pulsarDirectory, pulsarExePath);
             }
 
             if (steamClosed)
@@ -199,6 +209,34 @@ public partial class InstallationPageViewModel(MainViewModel mainViewModel) : Pa
         catch (Exception e)
         {
             WriteLog($"An error occurred while adding launch options to SE, skipping. Error: {e}");
+        }
+    }
+
+    private void CreateDesktopShortcut(string pulsarDirectory, string pulsarExePath)
+    {
+        WriteLog("Creating desktop shortcut.");
+
+        try
+        {
+            // https://stackoverflow.com/a/14632782/17308456
+
+            IShellLink link = (IShellLink)new ShellLink();
+            link.SetPath(pulsarExePath);
+            link.SetWorkingDirectory(pulsarDirectory);
+
+            IPersistFile file = (IPersistFile)link;
+            string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory, Environment.SpecialFolderOption.Create);
+
+            if (!string.IsNullOrEmpty(desktopPath))
+            {
+                string shortcutFilePath = Path.Combine(desktopPath, "Pulsar for SE.lnk");
+                file.Save(shortcutFilePath, false);
+            }
+        }
+        catch (Exception e)
+        {
+            WriteLog(e.ToString());
+            WriteLog("An error occurred while creating desktop shortcut");
         }
     }
 
