@@ -17,7 +17,7 @@ public partial class InstallOptionsPageViewModel(MainViewModel mainViewModel) : 
     private InstallOptions _options = new()
     {
         InstallPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Pulsar"),
-        VersionToInstall = PulsarVersion.NetFramework,
+        VersionToInstall = PulsarVersion.NetCore,
         AddLaunchOptions = false,
         CreateDesktopShortcut = false,
         RemovePluginLoader = true,
