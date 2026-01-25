@@ -35,7 +35,11 @@
         
         <!--Add To SE Launch Options-->
         <CheckBox IsChecked="{Binding AddLaunchOptions}" Margin="0,8,0,0">
-            Add to SE launch options. This will make starting SE in Steam automatically run Pulsar. (Steam will restart)
+            <TextBlock>
+                Add to SE launch options. This will make starting SE in Steam automatically run Pulsar. (Steam will restart)
+                <LineBreak />
+                Check this option when switching between .NET Framework and .NET 10 versions.
+            </TextBlock>
         </CheckBox>
 
         <!--Desktop Shortcut-->
