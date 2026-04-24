@@ -1,5 +1,10 @@
-﻿using Microsoft.Win32;
+﻿using Gameloop.Vdf;
+using Gameloop.Vdf.JsonConverter;
+using Gameloop.Vdf.Linq;
+using Microsoft.Win32;
+using PulsarInstaller.Vdf;
 using System.Diagnostics;
+using System.IO;
 
 namespace PulsarInstaller;
 
@@ -104,5 +109,65 @@ public static class SteamHelpers
             WorkingDirectory = TryGetSteamPath(),
             UseShellExecute = true,
         });
+    }
+
+    public static string? TryFindSE1Bin64Path()
+    {
+        string? steamInstallPath = SteamHelpers.TryGetSteamPath();
+
+        if (steamInstallPath is null)
+            return null;
+
+        // read libraryfolders.vdf
+        string libaryFoldersVdfPath = Path.Combine(steamInstallPath, "steamapps", "libraryfolders.vdf");
+
+        if (!File.Exists(libaryFoldersVdfPath))
+            return null;
+
+        try
+        {
+            using var libraryFolderVdfReader = File.OpenText(libaryFoldersVdfPath);
+            VProperty libraryFoldersData = VdfConvert.Deserialize(libraryFolderVdfReader);
+            var libraryFolders = libraryFoldersData.Value.Select(i => ((VProperty)i).Value.ToJson().ToObject<LibraryFolder>());
+
+            if (libraryFolders is null)
+                return null;
+
+            foreach (LibraryFolder? folder in libraryFolders)
+            {
+                if (folder?.path is null || (folder?.apps?.Count ?? 0) is 0)
+                    continue;
+
+                foreach (ulong appId in folder!.apps.Keys)
+                {
+                    string bin64Location = Path.Combine(folder.path, "steamapps", "common", "SpaceEngineers", "Bin64");
+                    if (appId == 244850 && ValidateBin64Path(bin64Location))
+                    {
+                        return bin64Location;
+                    }
+                }
+            }
+        }
+        catch
+        {
+            return null;
+        }
+
+        return null;
+
+        static bool ValidateBin64Path(string path)
+        {
+            if (!Path.IsPathRooted(path))
+                return false;
+
+            if (!Directory.Exists(path))
+                return false;
+
+            string gameExePath = Path.Combine(path, "SpaceEngineers.exe");
+            if (!File.Exists(gameExePath))
+                return false;
+
+            return true;
+        }
     }
 }

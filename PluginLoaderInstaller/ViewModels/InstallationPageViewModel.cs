@@ -269,7 +269,7 @@ public partial class InstallationPageViewModel(MainViewModel mainViewModel) : Pa
 
     private void TryRemovePluginLoaderFiles()
     {
-        string? bin64Path = App.TryFindSE1Bin64Path();
+        string? bin64Path = SteamHelpers.TryFindSE1Bin64Path();
         if (string.IsNullOrEmpty(bin64Path))
             return;
 
