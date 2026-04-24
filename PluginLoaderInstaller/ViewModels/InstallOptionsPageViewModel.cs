@@ -18,8 +18,9 @@ public partial class InstallOptionsPageViewModel(MainViewModel mainViewModel) : 
     {
         InstallPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Pulsar"),
         VersionToInstall = PulsarVersion.NetCore,
-        AddLaunchOptions = false,
-        CreateDesktopShortcut = false,
+        AddLaunchOptionsSE1 = false,
+        AddLaunchOptionsSE2 = false,
+        CreateDesktopShortcutSE1 = false,
         RemovePluginLoader = true,
     };
 
@@ -49,16 +50,28 @@ public partial class InstallOptionsPageViewModel(MainViewModel mainViewModel) : 
         }
     }
 
-    public bool AddLaunchOptions
+    public bool AddLaunchOptionsSE1
     {
-        get => _options.AddLaunchOptions;
-        set => SetProperty(ref _options.AddLaunchOptions, value);
+        get => _options.AddLaunchOptionsSE1;
+        set => SetProperty(ref _options.AddLaunchOptionsSE1, value);
     }
 
-    public bool CreateDesktopShortcut
+    public bool AddLaunchOptionsSE2
     {
-        get => _options.CreateDesktopShortcut;
-        set => SetProperty(ref _options.CreateDesktopShortcut, value);
+        get => _options.AddLaunchOptionsSE2;
+        set => SetProperty(ref _options.AddLaunchOptionsSE2, value);
+    }
+
+    public bool CreateDesktopShortcutSE1
+    {
+        get => _options.CreateDesktopShortcutSE1;
+        set => SetProperty(ref _options.CreateDesktopShortcutSE1, value);
+    }
+
+    public bool CreateDesktopShortcutSE2
+    {
+        get => _options.CreateDesktopShortcutSE2;
+        set => SetProperty(ref _options.CreateDesktopShortcutSE2, value);
     }
 
     public bool RemovePluginLoader

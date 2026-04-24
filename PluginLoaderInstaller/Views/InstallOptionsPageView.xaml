@@ -23,7 +23,7 @@
             <!--<Button Grid.Column="1" Margin="11,0,0,0" Content="Browse..." Width="73" Command="{Binding BrowseFoldersCommand}" />-->
         </Grid>
         
-        <TextBlock Text="Select the Pulsar version to install" Margin="0,16,0,0" />
+        <TextBlock Text="Select the Pulsar version to install for Space Engineers 1 (SE2 only has one version)" Margin="0,16,0,0" />
         <CheckBox IsChecked="{Binding InstallNetFramework}" Margin="0,8,0,0">
             .NET Framework 4.8
         </CheckBox>
@@ -31,20 +31,32 @@
             .NET 10 (Experimental, improves game performance but may be less stable)
         </CheckBox>
 
-        <TextBlock Text="Additional settings" Margin="0,16,0,0" />
+        <TextBlock Margin="0,16,0,0">
+            Add Pulsar to Steam game launch options. (Steam will restart)
+            <LineBreak />
+            This will make launching SE from the Steam library start the game through Pulsar.
+            <LineBreak />
+            Check this option when switching between .NET Framework and .NET 10 versions.
+        </TextBlock>
         
         <!--Add To SE Launch Options-->
-        <CheckBox IsChecked="{Binding AddLaunchOptions}" Margin="0,8,0,0">
-            <TextBlock>
-                Add to SE launch options. This will make starting SE in Steam automatically run Pulsar. (Steam will restart)
-                <LineBreak />
-                Check this option when switching between .NET Framework and .NET 10 versions.
-            </TextBlock>
+        <CheckBox IsChecked="{Binding AddLaunchOptionsSE1}" Margin="0,8,0,0">
+            Add launch options for Space Engineers 1
         </CheckBox>
 
+        <!--Add To SE2 Launch Options-->
+        <CheckBox IsChecked="{Binding AddLaunchOptionsSE2}" Margin="0,8,0,0">
+            Add launch options for Space Engineers 2
+        </CheckBox>
+
+        <TextBlock Text="Additional Settings" Margin="0,16,0,0" />
+
         <!--Desktop Shortcut-->
-        <CheckBox IsChecked="{Binding CreateDesktopShortcut}" Margin="0,8,0,0">
-            Create desktop shortcut
+        <CheckBox IsChecked="{Binding CreateDesktopShortcutSE1}" Margin="0,8,0,0">
+            Create desktop shortcut to launch Space Engineers 1 with Pulsar
+        </CheckBox>
+        <CheckBox IsChecked="{Binding CreateDesktopShortcutSE2}" Margin="0,8,0,0">
+            Create desktop shortcut to launch Space Engineers 2 with Pulsar
         </CheckBox>
     </StackPanel>
 </UserControl>

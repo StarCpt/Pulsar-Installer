@@ -29,7 +29,7 @@ public partial class App : Application
         MainWindow.Show();
     }
 
-    public static string? TryFindBin64Path()
+    public static string? TryFindSE1Bin64Path()
     {
         string? steamInstallPath = SteamHelpers.TryGetSteamPath();
 

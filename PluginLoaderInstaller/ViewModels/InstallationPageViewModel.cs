@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using PulsarInstaller.Com;
 using PulsarInstaller.Models;
+using System.ComponentModel;
 using System.IO;
 using System.IO.Compression;
 using System.Runtime.InteropServices.ComTypes;
@@ -57,7 +58,7 @@ public partial class InstallationPageViewModel(MainViewModel mainViewModel) : Pa
 
             InstallOptions options = MainViewModel.GetInstallOptions();
 
-            bool needToCloseSteam = options.AddLaunchOptions;
+            bool needToCloseSteam = options.AddLaunchOptionsSE1 || options.AddLaunchOptionsSE2;
             bool steamClosed = false;
             if (needToCloseSteam && SteamHelpers.IsSteamRunning())
             {
@@ -70,17 +71,9 @@ public partial class InstallationPageViewModel(MainViewModel mainViewModel) : Pa
                 WriteLogNewline();
             }
 
-            string? bin64Path = App.TryFindBin64Path();
             if (options.RemovePluginLoader)
             {
-                if (!string.IsNullOrWhiteSpace(bin64Path))
-                {
-                    RemovePluginLoaderFiles(bin64Path);
-                }
-                else
-                {
-                    WriteLog("Bin64 directory could not be located, skipping PluginLoader uninstallation.");
-                }
+                TryRemovePluginLoaderFiles();
             }
 
             // download latest release asset zip
@@ -121,17 +114,29 @@ public partial class InstallationPageViewModel(MainViewModel mainViewModel) : Pa
 
             WriteLogNewline();
 
-            string pulsarExePath = Path.Combine(pulsarDirectory, options.VersionToInstall is PulsarVersion.NetFramework ? "Legacy.exe" : "Interim.exe");
+            bool addNewline = options.AddLaunchOptionsSE1 || options.AddLaunchOptionsSE2 || options.CreateDesktopShortcutSE1 || options.CreateDesktopShortcutSE2 || steamClosed;
 
-            bool addNewline = options.AddLaunchOptions || options.CreateDesktopShortcut || steamClosed;
-            if (options.AddLaunchOptions)
+            string pulsarExePathSE1 = Path.Combine(pulsarDirectory, options.VersionToInstall is PulsarVersion.NetFramework ? "Legacy.exe" : "Interim.exe");
+            string pulsarExePathSE2 = Path.Combine(pulsarDirectory, "Modern.exe");
+
+            if (options.AddLaunchOptionsSE1)
             {
-                AddLaunchOptions(pulsarExePath);
+                AddLaunchOptions(pulsarExePathSE1, GameVersionEnum.SpaceEngineers1);
             }
 
-            if (options.CreateDesktopShortcut)
+            if (options.AddLaunchOptionsSE2)
             {
-                CreateDesktopShortcut(pulsarDirectory, pulsarExePath);
+                AddLaunchOptions(pulsarExePathSE2, GameVersionEnum.SpaceEngineers2);
+            }
+
+            if (options.CreateDesktopShortcutSE1)
+            {
+                CreateDesktopShortcut(pulsarDirectory, pulsarExePathSE1, "Pulsar for SE");
+            }
+
+            if (options.CreateDesktopShortcutSE2)
+            {
+                CreateDesktopShortcut(pulsarDirectory, pulsarExePathSE2, "Pulsar for SE2");
             }
 
             if (steamClosed)
@@ -163,9 +168,31 @@ public partial class InstallationPageViewModel(MainViewModel mainViewModel) : Pa
         WriteLog($"Environment.Is64BitProcess: {Environment.Is64BitProcess}");
     }
 
-    private void AddLaunchOptions(string pulsarExePath)
+    enum GameVersionEnum
     {
-        WriteLog($"Adding {App.InstalledAppName} to Space Engineers launch options.");
+        SpaceEngineers1,
+        SpaceEngineers2,
+    }
+
+    private void AddLaunchOptions(string pulsarExePath, GameVersionEnum version)
+    {
+        string appName;
+        string appId;
+        switch (version)
+        {
+            case GameVersionEnum.SpaceEngineers1:
+                appName = "Space Engineers";
+                appId = "244850";
+                break;
+            case GameVersionEnum.SpaceEngineers2:
+                appName = "Space Engineers 2";
+                appId = "1133870";
+                break;
+            default:
+                throw new InvalidEnumArgumentException(nameof(version), (int)version, typeof(GameVersionEnum));
+        };
+
+        WriteLog($"Adding {App.InstalledAppName} to {appName} launch options.");
 
         string launchOptionsStr = $"\\\"{pulsarExePath.Replace("\\", "\\\\")}\\\" %command%";
 
@@ -184,7 +211,7 @@ public partial class InstallationPageViewModel(MainViewModel mainViewModel) : Pa
                     .TryGetValue<VdfProperty>("Valve", StringComparison.OrdinalIgnoreCase)?
                     .TryGetValue<VdfProperty>("Steam", StringComparison.OrdinalIgnoreCase)?
                     .TryGetValue<VdfProperty>("apps", StringComparison.OrdinalIgnoreCase)?
-                    .TryGetValue<VdfProperty>("244850");
+                    .TryGetValue<VdfProperty>(appId);
 
                 if (seProperties != null)
                 {
@@ -208,11 +235,11 @@ public partial class InstallationPageViewModel(MainViewModel mainViewModel) : Pa
         }
         catch (Exception e)
         {
-            WriteLog($"An error occurred while adding launch options to SE, skipping. Error: {e}");
+            WriteLog($"An error occurred while adding {appName} launch options, skipping. Error: {e}");
         }
     }
 
-    private void CreateDesktopShortcut(string pulsarDirectory, string pulsarExePath)
+    private void CreateDesktopShortcut(string pulsarDirectory, string pulsarExePath, string shortcutName)
     {
         WriteLog("Creating desktop shortcut.");
 
@@ -229,7 +256,7 @@ public partial class InstallationPageViewModel(MainViewModel mainViewModel) : Pa
 
             if (!string.IsNullOrEmpty(desktopPath))
             {
-                string shortcutFilePath = Path.Combine(desktopPath, "Pulsar for SE.lnk");
+                string shortcutFilePath = Path.Combine(desktopPath, $"{shortcutName}.lnk");
                 file.Save(shortcutFilePath, false);
             }
         }
@@ -240,8 +267,12 @@ public partial class InstallationPageViewModel(MainViewModel mainViewModel) : Pa
         }
     }
 
-    private void RemovePluginLoaderFiles(string bin64Path)
+    private void TryRemovePluginLoaderFiles()
     {
+        string? bin64Path = App.TryFindSE1Bin64Path();
+        if (string.IsNullOrEmpty(bin64Path))
+            return;
+
         bool pluginLoaderInstalled = File.Exists(Path.Combine(bin64Path, "PluginLoader.dll"));
         if (pluginLoaderInstalled)
         {
