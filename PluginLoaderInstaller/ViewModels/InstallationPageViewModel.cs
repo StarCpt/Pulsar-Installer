@@ -1,7 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using PulsarInstaller.Com;
 using PulsarInstaller.Models;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.IO.Compression;
 using System.Runtime.InteropServices.ComTypes;
@@ -119,14 +121,51 @@ public partial class InstallationPageViewModel(MainViewModel mainViewModel) : Pa
             string pulsarExePathSE1 = Path.Combine(pulsarDirectory, options.VersionToInstall is PulsarVersion.NetFramework ? "Legacy.exe" : "Interim.exe");
             string pulsarExePathSE2 = Path.Combine(pulsarDirectory, "Modern.exe");
 
-            if (options.AddLaunchOptionsSE1)
+            if (options.AddLaunchOptionsSE1 || options.AddLaunchOptionsSE2)
             {
-                AddLaunchOptions(pulsarExePathSE1, GameVersionEnum.SpaceEngineers1);
-            }
+                if (options.AddLaunchOptionsSE1)
+                {
+                    WriteLog($"Adding Pulsar to Space Engineeers launch options.");
+                }
 
-            if (options.AddLaunchOptionsSE2)
-            {
-                AddLaunchOptions(pulsarExePathSE2, GameVersionEnum.SpaceEngineers2);
+                if (options.AddLaunchOptionsSE2)
+                {
+                    WriteLog($"Adding Pulsar to Space Engineeers 2 launch options.");
+                }
+
+                var configs = LoadUserLocalConfigs();
+                foreach (var conf in configs)
+                {
+                    try
+                    {
+                        bool modified = false;
+
+                        if (options.AddLaunchOptionsSE1)
+                        {
+                            const string APPID_SE1 = "244850";
+                            string launchOptionsStrSE1 = $"\\\"{pulsarExePathSE1.Replace(@"\", @"\\")}\\\" %command%";
+
+                            modified = conf.AddGameLaunchOptions(APPID_SE1, launchOptionsStrSE1);
+                        }
+
+                        if (options.AddLaunchOptionsSE2)
+                        {
+                            const string APPID_SE2 = "1133870";
+                            string launchOptionsStrSE2 = $"\\\"{pulsarExePathSE2.Replace(@"\", @"\\")}\\\" %command%";
+
+                            modified = conf.AddGameLaunchOptions(APPID_SE2, launchOptionsStrSE2);
+                        }
+
+                        if (modified)
+                        {
+                            conf.Save(true);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        WriteLog($"An error occurred while adding launch options, skipping. File={conf.FilePath}, Error={e}");
+                    }
+                }
             }
 
             if (options.CreateDesktopShortcutSE1)
@@ -174,69 +213,118 @@ public partial class InstallationPageViewModel(MainViewModel mainViewModel) : Pa
         SpaceEngineers2,
     }
 
-    private void AddLaunchOptions(string pulsarExePath, GameVersionEnum version)
+    class UserLocalConfig
     {
-        string appName;
-        string appId;
-        switch (version)
+        public string FilePath => _filePath;
+
+        private readonly VdfProperty _root;
+        private readonly string _filePath;
+
+        private UserLocalConfig(VdfProperty root, string filePath)
         {
-            case GameVersionEnum.SpaceEngineers1:
-                appName = "Space Engineers";
-                appId = "244850";
-                break;
-            case GameVersionEnum.SpaceEngineers2:
-                appName = "Space Engineers 2";
-                appId = "1133870";
-                break;
-            default:
-                throw new InvalidEnumArgumentException(nameof(version), (int)version, typeof(GameVersionEnum));
-        };
+            _root = root;
+            _filePath = filePath;
+        }
 
-        WriteLog($"Adding {App.InstalledAppName} to {appName} launch options.");
-
-        string launchOptionsStr = $"\\\"{pulsarExePath.Replace("\\", "\\\\")}\\\" %command%";
-
-        try
+        public bool AddGameLaunchOptions(string appId, string launchOptionsStr)
         {
-            // read localconfigs.vdf
-            string userDataDir = Path.Combine(SteamHelpers.TryGetSteamPath()!, "userdata");
-            foreach (var userLocalConfigPath in Directory.GetDirectories(userDataDir, "*").Select(i => Path.Combine(i, "config", "localconfig.vdf")))
+            var appProperties = _root
+                .TryGetValue<VdfProperty>("Software", StringComparison.OrdinalIgnoreCase)?
+                .TryGetValue<VdfProperty>("Valve", StringComparison.OrdinalIgnoreCase)?
+                .TryGetValue<VdfProperty>("Steam", StringComparison.OrdinalIgnoreCase)?
+                .TryGetValue<VdfProperty>("apps", StringComparison.OrdinalIgnoreCase)?
+                .TryGetValue<VdfProperty>(appId);
+
+            if (appProperties is null)
+                return false;
+
+            // Check if launch options are already set
+            if (appProperties.TryGetValue("LaunchOptions") is VdfKeyValue kv && kv.Value.Contains(launchOptionsStr))
+                return false;
+
+            appProperties["LaunchOptions"] = new VdfKeyValue
             {
-                if (!File.Exists(userLocalConfigPath))
-                    continue;
+                Key = "LaunchOptions",
+                Value = launchOptionsStr,
+            };
 
-                var userLocalConfig = VdfSerializer.Deserialize(userLocalConfigPath);
-                var seProperties = userLocalConfig
+            return true;
+        }
+
+        private void CreateBackup()
+        {
+            string backupFileName = _filePath + ".backup";
+            if (File.Exists(backupFileName))
+            {
+                if (File.Exists(backupFileName + "_1"))
+                {
+                    if (File.Exists(backupFileName + "_2"))
+                    {
+                        File.Move(backupFileName + "_2", backupFileName + "_3", true);
+                    }
+                    File.Move(backupFileName + "_1", backupFileName + "_2", true);
+                }
+                File.Move(backupFileName, backupFileName + "_1", true);
+            }
+
+            // make backup
+            File.Copy(_filePath, backupFileName, true);
+        }
+
+        public void Save(bool createBackup)
+        {
+            if (createBackup)
+            {
+                CreateBackup();
+            }
+            VdfSerializer.Serialize(_root, _filePath);
+        }
+
+        public static bool TryDeserialize(string filePath, [NotNullWhen(true)] out UserLocalConfig? result)
+        {
+            result = null;
+
+            if (!File.Exists(filePath))
+                return false;
+
+            try
+            {
+                var root = VdfSerializer.Deserialize(filePath);
+
+                // basic validation to make sure we didn't deserialize a random file
+                bool isUserLocalConfig = root
                     .TryGetValue<VdfProperty>("Software", StringComparison.OrdinalIgnoreCase)?
                     .TryGetValue<VdfProperty>("Valve", StringComparison.OrdinalIgnoreCase)?
-                    .TryGetValue<VdfProperty>("Steam", StringComparison.OrdinalIgnoreCase)?
-                    .TryGetValue<VdfProperty>("apps", StringComparison.OrdinalIgnoreCase)?
-                    .TryGetValue<VdfProperty>(appId);
+                    .TryGetValue<VdfProperty>("Steam", StringComparison.OrdinalIgnoreCase) != null;
 
-                if (seProperties != null)
-                {
-                    // Check if launch options are already set
-                    if (seProperties.TryGetValue("LaunchOptions") is VdfKeyValue kv && kv.Value.Contains(launchOptionsStr))
-                        continue;
+                if (!isUserLocalConfig)
+                    return false;
 
-                    seProperties["LaunchOptions"] = new VdfKeyValue
-                    {
-                        Key = "LaunchOptions",
-                        Value = launchOptionsStr,
-                    };
-
-                    // make backup
-                    File.Copy(userLocalConfigPath, userLocalConfigPath + $".backup_{DateTime.Now:yyMMdd_hhmmss}");
-
-                    // write modified file
-                    VdfSerializer.Serialize(userLocalConfig, userLocalConfigPath);
-                }
+                result = new UserLocalConfig(root, filePath);
+                return true;
+            }
+            catch
+            {
+                return false;
             }
         }
-        catch (Exception e)
+    }
+
+    static List<UserLocalConfig> LoadUserLocalConfigs()
+    {
+        List<UserLocalConfig> result = [];
+
+        // read localconfigs.vdf
+        string userDataDir = Path.Combine(SteamHelpers.TryGetSteamPath()!, "userdata");
+        foreach (var userLocalConfigPath in Directory.GetDirectories(userDataDir, "*").Select(i => Path.Combine(i, "config", "localconfig.vdf")))
         {
-            WriteLog($"An error occurred while adding {appName} launch options, skipping. Error: {e}");
+            if (UserLocalConfig.TryDeserialize(userLocalConfigPath, out var config))
+            {
+                result.Add(config);
+            }
         }
+
+        return result;
     }
 
     private void CreateDesktopShortcut(string pulsarDirectory, string pulsarExePath, string shortcutName)
