@@ -21,6 +21,7 @@ public partial class InstallOptionsPageViewModel(MainViewModel mainViewModel) : 
         AddLaunchOptionsSE1 = false,
         AddLaunchOptionsSE2 = false,
         CreateDesktopShortcutSE1 = false,
+        CreateDesktopShortcutSE2 = false,
         RemovePluginLoader = true,
     };
 
