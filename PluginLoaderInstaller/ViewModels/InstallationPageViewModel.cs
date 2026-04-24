@@ -257,6 +257,13 @@ public partial class InstallationPageViewModel(MainViewModel mainViewModel) : Pa
             if (!string.IsNullOrEmpty(desktopPath))
             {
                 string shortcutFilePath = Path.Combine(desktopPath, $"{shortcutName}.lnk");
+
+                // delete existing shortcut
+                if (File.Exists(shortcutFilePath))
+                {
+                    File.Delete(shortcutFilePath);
+                }
+
                 file.Save(shortcutFilePath, false);
             }
         }
