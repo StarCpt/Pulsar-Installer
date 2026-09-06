@@ -40,7 +40,7 @@ public static class InstallHelpers
     public static async Task<ZipArchive?> DownloadReleaseAsset(Release releaseInfo)
     {
         // find first valid zip asset
-        string assetEndsWithStr = releaseInfo.Name + ".zip"; // Pulsar-v1.2.3.zip
+        string assetEndsWithStr = releaseInfo.Name + "-win-x64.zip"; // Pulsar-v1.2.3.zip
         var assetToDownload = releaseInfo.Assets.FirstOrDefault(i => i.Name.EndsWith(assetEndsWithStr, StringComparison.OrdinalIgnoreCase));
 
         if (assetToDownload is null)
